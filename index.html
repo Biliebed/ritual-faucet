@@ -94,6 +94,34 @@
             font-size: 1.1rem;
         }
         
+        .mascot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px 25px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            display: inline-flex;
+        }
+        
+        .mascot-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .mascot-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--accent-green);
+        }
+        
         .badge {
             display: inline-block;
             background: rgba(16, 185, 129, 0.1);
@@ -500,6 +528,10 @@
             <h1>Ritual Faucet</h1>
             <p>Play games to earn testnet tokens on Ritual Chain</p>
             <span class="badge">🧪 TESTNET • CHAIN ID: 1979</span>
+            <div class="mascot">
+                <img src="siggy.jpeg" alt="Siggy Mascot" class="mascot-img">
+                <span class="mascot-name">Siggy says: Play to earn! 🎮</span>
+            </div>
         </div>
         
         <!-- Steps -->
