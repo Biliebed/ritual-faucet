@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siggy Runner - Ritual Faucet</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #050505;
+            --bg-secondary: #0d0d0d;
+            --bg-card: #121212;
+            --border: rgba(16, 185, 129, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: #8888a0;
+            --accent-green: #10b981;
+            --accent-green-light: #34d399;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+        
+        .game-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .game-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .game-title img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+        
+        .game-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .game-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+        }
+        
+        .canvas-wrapper {
+            position: relative;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        
+        .game-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+        }
+        
+        .game-overlay.hidden {
+            display: none;
+        }
+        
+        .overlay-content {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .overlay-mascot {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-green);
+            margin: 0 auto 20px;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+            animation: bounce 1s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .overlay-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        
+        .overlay-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .overlay-score {
+            font-size: 48px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .controls-info {
+            text-align: center;
+            padding: 15px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .controls-info kbd {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent-green);
+            margin: 0 3px;
+        }
+        
+        .mobile-controls {
+            display: none;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .mobile-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        
+        .mobile-btn:active {
+            background: var(--accent-green);
+            transform: scale(0.95);
+        }
+        
+        .reward-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .reward-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .reward-amount {
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        
+        @media (max-width: 600px) {
+            .game-header { flex-direction: column; text-align: center; }
+            .game-stats { justify-content: center; }
+            .mobile-controls { display: flex; }
+            .overlay-score { font-size: 36px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-title">
+                <img src="logo.jpg" alt="Ritual">
+                <h1>Siggy Runner</h1>
+            </div>
+            <div class="game-stats">
+                <div class="stat">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Best</div>
+                    <div class="stat-value" id="bestScore">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Coins</div>
+                    <div class="stat-value" id="coins">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
+            
+            <!-- Start Overlay -->
+            <div class="game-overlay" id="startOverlay">
+                <div class="overlay-content">
+                    <img src="siggy.jpeg" alt="Siggy" class="overlay-mascot">
+                    <div class="overlay-title">🐱 Siggy Runner</div>
+                    <div class="overlay-subtitle">Help Siggy run and collect coins!</div>
+                    <button class="btn btn-primary" onclick="startGame()">▶ Start Running</button>
+                </div>
+            </div>
+            
+            <!-- Game Over Overlay -->
+            <div class="game-overlay hidden" id="gameOverOverlay">
+                <div class="overlay-content">
+                    <div class="overlay-title">💥 Game Over!</div>
+                    <div class="overlay-subtitle">Siggy tripped!</div>
+                    <div class="overlay-score" id="finalScore">0</div>
+                    <div style="margin-bottom: 20px;">
+                        <span style="color: var(--text-secondary);">Coins collected: </span>
+                        <span style="color: var(--accent-green); font-weight: 700;" id="finalCoins">0</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="restartGame()">🔄 Try Again</button>
+                    <button class="btn btn-secondary" onclick="claimReward()">🎁 Claim Reward</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-info">
+            Press <kbd>SPACE</kbd> or <kbd>TAP</kbd> to jump • Double tap for double jump!
+        </div>
+        
+        <div class="mobile-controls">
+            <div class="mobile-btn" ontouchstart="jump()" onclick="jump()">🦘</div>
+        </div>
+        
+        <div class="reward-bar">
+            <span class="reward-text">Reward for this run:</span>
+            <span class="reward-amount" id="rewardAmount">0 RITUAL</span>
+        </div>
+    </div>
+
+    <script>
+        // ===== GAME CONFIG =====
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let gameState = 'start'; // start, playing, over
+        let score = 0;
+        let coins = 0;
+        let bestScore = parseInt(localStorage.getItem('siggyBestScore')) || 0;
+        let gameSpeed = 5;
+        let gravity = 0.6;
+        let groundY = canvas.height - 60;
+        
+        // Siggy character
+        let siggy = {
+            x: 100,
+            y: groundY,
+            width: 50,
+            height: 60,
+            velocityY: 0,
+            isJumping: false,
+            canDoubleJump: true,
+            jumpCount: 0,
+            frame: 0,
+            frameTimer: 0
+        };
+        
+        // Game objects
+        let obstacles = [];
+        let coinItems = [];
+        let clouds = [];
+        let groundTiles = [];
+        
+        // Colors
+        const COLORS = {
+            siggyBody: '#4a4a4a',
+            siggyBelly: '#d4a5a5',
+            siggyEyes: '#ffd700',
+            siggyNose: '#ffb6c1',
+            siggySymbol: '#ffffff',
+            obstacle: '#ff4444',
+            coin: '#ffd700',
+            ground: '#2d5a27',
+            groundDark: '#1a3d1a'
+        };
+        
+        // ===== SIGGY DRAWING =====
+        function drawSiggy() {
+            const x = siggy.x;
+            const y = siggy.y;
+            const bounce = siggy.isJumping ? 0 : Math.sin(siggy.frame * 0.2) * 3;
+            const legOffset = siggy.isJumping ? 0 : Math.sin(siggy.frame * 0.3) * 5;
+            
+            ctx.save();
+            ctx.translate(x, y + bounce);
+            
+            // Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(25, 55, 20, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Tail
+            ctx.strokeStyle = COLORS.siggyBody;
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(-5, 30);
+            ctx.quadraticCurveTo(-15, 20 + Math.sin(siggy.frame * 0.15) * 8, -20, 30);
+            ctx.stroke();
+            
+            // Back legs
+            ctx.fillStyle = COLORS.siggyBody;
+            ctx.beginPath();
+            ctx.roundRect(5 + legOffset, 45, 12, 18, 4);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.roundRect(25 - legOffset, 45, 12, 18, 4);
+            ctx.fill();
+            
+            // Body
+            ctx.fillStyle = COLORS.siggyBody;
+            ctx.beginPath();
+            ctx.roundRect(5, 20, 40, 35, 12);
+            ctx.fill();
+            
+            // Belly
+            ctx.fillStyle = COLORS.siggyBelly;
+            ctx.beginPath();
+            ctx.ellipse(25, 38, 12, 15, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Front legs
+            ctx.fillStyle = COLORS.siggyBody;
+            ctx.beginPath();
+            ctx.roundRect(35 + legOffset, 45, 12, 18, 4);
+            ctx.fill();
+            
+            // Head
+            ctx.fillStyle = COLORS.siggyBody;
+            ctx.beginPath();
+            ctx.arc(45, 20, 22, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Ears
+            ctx.beginPath();
+            ctx.moveTo(30, 5);
+            ctx.lineTo(35, -10);
+            ctx.lineTo(42, 5);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(52, 5);
+            ctx.lineTo(58, -10);
+            ctx.lineTo(62, 5);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Inner ears
+            ctx.fillStyle = COLORS.siggyBelly;
+            ctx.beginPath();
+            ctx.moveTo(33, 5);
+            ctx.lineTo(36, -4);
+            ctx.lineTo(40, 5);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(54, 5);
+            ctx.lineTo(57, -4);
+            ctx.lineTo(60, 5);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Eyes
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(38, 18, 7, 0, Math.PI * 2);
+            ctx.arc(52, 18, 7, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = COLORS.siggyEyes;
+            ctx.beginPath();
+            ctx.arc(39, 18, 4, 0, Math.PI * 2);
+            ctx.arc(53, 18, 4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.arc(40, 18, 2, 0, Math.PI * 2);
+            ctx.arc(54, 18, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Eye shine
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(41, 16, 1.5, 0, Math.PI * 2);
+            ctx.arc(55, 16, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Nose
+            ctx.fillStyle = COLORS.siggyNose;
+            ctx.beginPath();
+            ctx.arc(45, 24, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Mouth
+            ctx.strokeStyle = '#333333';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(45, 27);
+            ctx.quadraticCurveTo(42, 30, 40, 28);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(45, 27);
+            ctx.quadraticCurveTo(48, 30, 50, 28);
+            ctx.stroke();
+            
+            // Symbol on forehead (Endless Knot simplified)
+            ctx.strokeStyle = COLORS.siggySymbol;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(42, 5);
+            ctx.lineTo(48, 5);
+            ctx.lineTo(48, 9);
+            ctx.lineTo(42, 9);
+            ctx.closePath();
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
+        // ===== OBSTACLES =====
+        function drawObstacle(obs) {
+            ctx.fillStyle = COLORS.obstacle;
+            ctx.shadowColor = '#ff0000';
+            ctx.shadowBlur = 10;
+            
+            if (obs.type === 'spike') {
+                // Triangle spike
+                ctx.beginPath();
+                ctx.moveTo(obs.x + obs.width/2, obs.y);
+                ctx.lineTo(obs.x + obs.width, obs.y + obs.height);
+                ctx.lineTo(obs.x, obs.y + obs.height);
+                ctx.closePath();
+                ctx.fill();
+            } else {
+                // Box obstacle
+                ctx.beginPath();
+                ctx.roundRect(obs.x, obs.y, obs.width, obs.height, 5);
+                ctx.fill();
+                
+                // Warning symbol
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 16px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('!', obs.x + obs.width/2, obs.y + obs.height/2 + 5);
+            }
+            
+            ctx.shadowBlur = 0;
+        }
+        
+        // ===== COINS =====
+        function drawCoin(coin) {
+            const bounce = Math.sin(Date.now() / 200 + coin.x) * 3;
+            
+            ctx.fillStyle = COLORS.coin;
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = 15;
+            
+            ctx.beginPath();
+            ctx.arc(coin.x + coin.width/2, coin.y + coin.height/2 + bounce, coin.width/2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Inner circle
+            ctx.fillStyle = '#ffed4a';
+            ctx.beginPath();
+            ctx.arc(coin.x + coin.width/2, coin.y + coin.height/2 + bounce, coin.width/3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Symbol
+            ctx.fillStyle = '#b8860b';
+            ctx.font = 'bold 10px JetBrains Mono';
+            ctx.textAlign = 'center';
+            ctx.fillText('◈', coin.x + coin.width/2, coin.y + coin.height/2 + bounce + 4);
+            
+            ctx.shadowBlur = 0;
+        }
+        
+        // ===== BACKGROUND =====
+        function drawBackground() {
+            // Sky gradient
+            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, '#1a1a2e');
+            grad.addColorStop(0.5, '#16213e');
+            grad.addColorStop(1, '#0f3460');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Stars
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            for (let i = 0; i < 50; i++) {
+                const x = (i * 137) % canvas.width;
+                const y = (i * 97) % (canvas.height * 0.6);
+                ctx.beginPath();
+                ctx.arc(x, y, 1, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Clouds
+            clouds.forEach(cloud => {
+                ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                ctx.beginPath();
+                ctx.arc(cloud.x, cloud.y, cloud.size, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.size, cloud.y - 10, cloud.size * 0.8, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.size * 2, cloud.y, cloud.size * 0.9, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Ground
+            ctx.fillStyle = COLORS.ground;
+            ctx.fillRect(0, groundY + 20, canvas.width, canvas.height - groundY);
+            
+            // Ground texture
+            ctx.fillStyle = COLORS.groundDark;
+            for (let i = 0; i < canvas.width; i += 30) {
+                ctx.fillRect(i + ((Date.now() / 50) % 30) - 30, groundY + 25, 20, 8);
+            }
+            
+            // Ground line
+            ctx.strokeStyle = var(--accent-green);
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, groundY + 20);
+            ctx.lineTo(canvas.width, groundY + 20);
+            ctx.stroke();
+        }
+        
+        // ===== GAME LOOP =====
+        function update() {
+            if (gameState !== 'playing') return;
+            
+            // Update Siggy
+            siggy.velocityY += gravity;
+            siggy.y += siggy.velocityY;
+            siggy.frame++;
+            
+            if (siggy.y >= groundY) {
+                siggy.y = groundY;
+                siggy.velocityY = 0;
+                siggy.isJumping = false;
+                siggy.jumpCount = 0;
+            }
+            
+            // Update obstacles
+            obstacles.forEach(obs => {
+                obs.x -= gameSpeed;
+            });
+            
+            obstacles = obstacles.filter(obs => obs.x > -obs.width);
+            
+            // Update coins
+            coinItems.forEach(coin => {
+                coin.x -= gameSpeed;
+            });
+            
+            coinItems = coinItems.filter(coin => coin.x > -coin.width);
+            
+            // Update clouds
+            clouds.forEach(cloud => {
+                cloud.x -= cloud.speed;
+                if (cloud.x < -cloud.size * 3) {
+                    cloud.x = canvas.width + 100;
+                }
+            });
+            
+            // Collision detection
+            obstacles.forEach(obs => {
+                if (siggy.x + siggy.width > obs.x + 10 &&
+                    siggy.x < obs.x + obs.width - 10 &&
+                    siggy.y + siggy.height > obs.y + 10 &&
+                    siggy.y < obs.y + obs.height) {
+                    gameOver();
+                }
+            });
+            
+            // Coin collection
+            coinItems.forEach((coin, i) => {
+                if (siggy.x + siggy.width > coin.x &&
+                    siggy.x < coin.x + coin.width &&
+                    siggy.y + siggy.height > coin.y &&
+                    siggy.y < coin.y + coin.height) {
+                    coinItems.splice(i, 1);
+                    coins++;
+                    score += 5;
+                    document.getElementById('coins').textContent = coins;
+                    updateScore();
+                }
+            });
+            
+            // Spawn obstacles
+            if (Math.random() < 0.02 + (gameSpeed * 0.001)) {
+                spawnObstacle();
+            }
+            
+            // Spawn coins
+            if (Math.random() < 0.03) {
+                spawnCoin();
+            }
+            
+            // Increase speed
+            if (score > 0 && score % 100 === 0) {
+                gameSpeed = Math.min(12, gameSpeed + 0.5);
+            }
+            
+            updateReward();
+        }
+        
+        function draw() {
+            drawBackground();
+            
+            // Draw coins
+            coinItems.forEach(drawCoin);
+            
+            // Draw obstacles
+            obstacles.forEach(drawObstacle);
+            
+            // Draw Siggy
+            drawSiggy();
+        }
+        
+        function gameLoop() {
+            update();
+            draw();
+            if (gameState === 'playing') {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+        
+        // ===== SPAWN FUNCTIONS =====
+        function spawnObstacle() {
+            const type = Math.random() > 0.5 ? 'spike' : 'box';
+            obstacles.push({
+                x: canvas.width + 50,
+                y: type === 'spike' ? groundY - 25 : groundY - 40,
+                width: type === 'spike' ? 30 : 35,
+                height: type === 'spike' ? 30 : 45,
+                type: type
+            });
+        }
+        
+        function spawnCoin() {
+            coinItems.push({
+                x: canvas.width + 50,
+                y: groundY - 80 - Math.random() * 60,
+                width: 20,
+                height: 20
+            });
+        }
+        
+        function spawnCloud() {
+            clouds.push({
+                x: Math.random() * canvas.width,
+                y: 30 + Math.random() * 100,
+                size: 20 + Math.random() * 30,
+                speed: 0.2 + Math.random() * 0.3
+            });
+        }
+        
+        // ===== GAME CONTROL =====
+        function startGame() {
+            gameState = 'playing';
+            score = 0;
+            coins = 0;
+            gameSpeed = 5;
+            siggy.y = groundY;
+            siggy.velocityY = 0;
+            obstacles = [];
+            coinItems = [];
+            clouds = [];
+            
+            for (let i = 0; i < 5; i++) spawnCloud();
+            
+            document.getElementById('startOverlay').classList.add('hidden');
+            document.getElementById('gameOverOverlay').classList.add('hidden');
+            document.getElementById('score').textContent = '0';
+            document.getElementById('coins').textContent = '0';
+            
+            gameLoop();
+        }
+        
+        function gameOver() {
+            gameState = 'over';
+            
+            if (score > bestScore) {
+                bestScore = score;
+                localStorage.setItem('siggyBestScore', bestScore);
+                document.getElementById('bestScore').textContent = bestScore;
+            }
+            
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalCoins').textContent = coins;
+            document.getElementById('gameOverOverlay').classList.remove('hidden');
+        }
+        
+        function restartGame() {
+            startGame();
+        }
+        
+        function jump() {
+            if (gameState !== 'playing') return;
+            
+            if (!siggy.isJumping) {
+                siggy.velocityY = -14;
+                siggy.isJumping = true;
+                siggy.jumpCount = 1;
+            } else if (siggy.jumpCount < 2) {
+                siggy.velocityY = -12;
+                siggy.jumpCount = 2;
+            }
+        }
+        
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+        }
+        
+        function updateReward() {
+            let reward = 0;
+            if (score >= 100) reward = 5;
+            if (score >= 200) reward = 10;
+            if (score >= 500) reward = 20;
+            document.getElementById('rewardAmount').textContent = reward + ' RITUAL';
+        }
+        
+        function claimReward() {
+            let reward = 0;
+            if (score >= 100) reward = 5;
+            if (score >= 200) reward = 10;
+            if (score >= 500) reward = 20;
+            
+            if (reward > 0) {
+                alert('🎉 You earned ' + reward + ' RITUAL tokens!\n\nScore: ' + score + '\nCoins: ' + coins + '\n\n(Tokens will be sent to your wallet on Ritual Testnet)');
+            } else {
+                alert('Score 100+ to earn RITUAL tokens!');
+            }
+        }
+        
+        // ===== CONTROLS =====
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                jump();
+            }
+        });
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+        
+        canvas.addEventListener('click', () => {
+            jump();
+        });
+        
+        // ===== INIT =====
+        document.getElementById('bestScore').textContent = bestScore;
+        for (let i = 0; i < 5; i++) spawnCloud();
+        drawBackground();
+        drawSiggy();
+    </script>
+</body>
+</html>
