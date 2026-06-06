@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ritual Faucet - Play to Claim</title>
+    <meta name="theme-color" content="#10b981">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #050505;
+            --bg-secondary: #0d0d0d;
+            --bg-card: #121212;
+            --border: rgba(16, 185, 129, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: #8888a0;
+            --accent-green: #10b981;
+            --accent-green-light: #34d399;
+            --accent-green-dark: #059669;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Background Effects */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+        
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+        .orb-1 { width: 400px; height: 400px; background: rgba(16,185,129,0.1); top: -100px; right: -100px; animation: float 20s ease-in-out infinite; }
+        .orb-2 { width: 300px; height: 300px; background: rgba(16,185,129,0.08); bottom: -50px; left: -50px; animation: float 15s ease-in-out infinite reverse; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -30px); } }
+        
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .logo {
+            margin-bottom: 15px;
+        }
+        
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 12px;
+            filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.3));
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+        }
+        
+        /* Steps */
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
+        .step.active {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .step.completed {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+        
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        
+        .step.active .step-num { background: var(--accent-green); color: white; }
+        .step.completed .step-num { background: var(--accent-green); color: white; }
+        
+        /* Main Card */
+        .main-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        /* Game Selection */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        .game-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .game-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+        }
+        
+        .game-card.selected {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .game-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .game-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .game-reward {
+            margin-top: 12px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+        
+        /* Game Area */
+        .game-area {
+            display: none;
+            text-align: center;
+        }
+        
+        .game-area.active {
+            display: block;
+        }
+        
+        .game-canvas-container {
+            display: inline-block;
+            margin: 20px 0;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        #gameCanvas {
+            display: block;
+            background: var(--bg-secondary);
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .game-stat {
+            text-align: center;
+        }
+        
+        .game-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .game-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+        }
+        
+        /* Claim Section */
+        .claim-section {
+            display: none;
+        }
+        
+        .claim-section.active {
+            display: block;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+        
+        .input-group input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .claim-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .claim-info-item {
+            text-align: center;
+        }
+        
+        .claim-info-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        .claim-info-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-green-dark), var(--accent-green));
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        /* Success Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            animation: popIn 0.3s ease;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .modal h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--accent-green);
+        }
+        
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .modal .amount {
+            font-size: 36px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+            margin: 20px 0;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 14px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 200;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .toast.hidden { display: none; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        
+        .footer a {
+            color: var(--accent-green);
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .game-grid { grid-template-columns: 1fr; }
+            .steps { flex-direction: column; align-items: center; }
+            .game-stats { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <img src="logo.jpg" alt="Ritual Logo" class="logo-img">
+            </div>
+            <h1>Ritual Faucet</h1>
+            <p>Play games to earn testnet tokens on Ritual Chain</p>
+            <span class="badge">🧪 TESTNET • CHAIN ID: 1979</span>
+        </div>
+        
+        <!-- Steps -->
+        <div class="steps">
+            <div class="step active" id="step1">
+                <div class="step-num">1</div>
+                <span>Choose Game</span>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-num">2</div>
+                <span>Play & Score</span>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-num">3</div>
+                <span>Claim Tokens</span>
+            </div>
+        </div>
+        
+        <!-- Main Card -->
+        <div class="main-card">
+            <div class="card-header">
+                <h2 id="cardTitle">🎮 Select a Game</h2>
+                <span id="cardSubtitle" style="color: var(--text-secondary); font-size: 13px;">Choose your challenge</span>
+            </div>
+            <div class="card-body">
+                <!-- Game Selection -->
+                <div id="gameSelection">
+                    <div class="game-grid">
+                        <div class="game-card" onclick="selectGame('snake')">
+                            <div class="game-icon">🐍</div>
+                            <div class="game-name">Snake</div>
+                            <div class="game-desc">Classic snake game. Eat to grow!</div>
+                            <div class="game-reward">Score 50+ = 10 RITUAL</div>
+                        </div>
+                        <div class="game-card" onclick="selectGame('clicker')">
+                            <div class="game-icon">👆</div>
+                            <div class="game-name">Speed Clicker</div>
+                            <div class="game-desc">Click as fast as you can in 10s!</div>
+                            <div class="game-reward">Click 50+ = 10 RITUAL</div>
+                        </div>
+                        <div class="game-card" onclick="selectGame('memory')">
+                            <div class="game-icon">🧠</div>
+                            <div class="game-name">Memory Match</div>
+                            <div class="game-desc">Match all pairs to win!</div>
+                            <div class="game-reward">Complete = 15 RITUAL</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Game Area -->
+                <div class="game-area" id="gameArea">
+                    <div class="game-canvas-container">
+                        <canvas id="gameCanvas" width="400" height="400"></canvas>
+                    </div>
+                    <div class="game-stats">
+                        <div class="game-stat">
+                            <div class="game-stat-label">Score</div>
+                            <div class="game-stat-value" id="gameScore">0</div>
+                        </div>
+                        <div class="game-stat">
+                            <div class="game-stat-label">Time</div>
+                            <div class="game-stat-value" id="gameTime">0s</div>
+                        </div>
+                        <div class="game-stat">
+                            <div class="game-stat-label">Reward</div>
+                            <div class="game-stat-value" id="gameReward">0</div>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="gameActionBtn" onclick="startGame()">▶ Start Game</button>
+                        <button class="btn btn-secondary" onclick="backToSelection()">← Back</button>
+                    </div>
+                </div>
+                
+                <!-- Claim Section -->
+                <div class="claim-section" id="claimSection">
+                    <div class="claim-info">
+                        <div class="claim-info-item">
+                            <div class="claim-info-label">Your Score</div>
+                            <div class="claim-info-value" id="claimScore">0</div>
+                        </div>
+                        <div class="claim-info-item">
+                            <div class="claim-info-label">Reward</div>
+                            <div class="claim-info-value" id="claimReward">0 RITUAL</div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Your Wallet Address (EVM)</label>
+                        <input type="text" id="walletInput" placeholder="0x..." maxlength="42">
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="claimTokens()">🎁 Claim Tokens</button>
+                        <button class="btn btn-secondary" onclick="resetFaucet()">🔄 Play Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>Powered by <a href="https://ritual.net" target="_blank">Ritual Network</a> • Chain ID: 1979</p>
+            <p style="margin-top: 8px;">Made with 💜 for Ritual Community</p>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-icon">🎉</div>
+            <h2>Tokens Claimed!</h2>
+            <p>Check your wallet on Ritual Testnet</p>
+            <div class="amount" id="modalAmount">0 RITUAL</div>
+            <p style="font-size: 12px; font-family: 'JetBrains Mono', monospace;" id="modalAddress">0x...</p>
+            <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 20px;">Done</button>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast hidden" id="toast">
+        <span id="toastIcon">✅</span>
+        <span id="toastText">Action completed</span>
+    </div>
+
+    <script>
+        // ===== STATE =====
+        let currentGame = null;
+        let gameRunning = false;
+        let gameScore = 0;
+        let gameTimer = 0;
+        let gameInterval = null;
+        let selectedReward = 0;
+        
+        // ===== GAME SELECTION =====
+        function selectGame(game) {
+            currentGame = game;
+            
+            // Update UI
+            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            // Show game area
+            setTimeout(() => {
+                document.getElementById('gameSelection').style.display = 'none';
+                document.getElementById('gameArea').classList.add('active');
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step1').classList.add('completed');
+                document.getElementById('step2').classList.add('active');
+                
+                const titles = { snake: '🐍 Snake Game', clicker: '👆 Speed Clicker', memory: '🧠 Memory Match' };
+                document.getElementById('cardTitle').textContent = titles[game];
+                document.getElementById('cardSubtitle').textContent = 'Score points to earn tokens';
+                
+                initGame();
+            }, 300);
+        }
+        
+        function backToSelection() {
+            stopGame();
+            document.getElementById('gameSelection').style.display = 'block';
+            document.getElementById('gameArea').classList.remove('active');
+            document.getElementById('claimSection').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('step1').classList.remove('completed');
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('cardTitle').textContent = '🎮 Select a Game';
+            document.getElementById('cardSubtitle').textContent = 'Choose your challenge';
+        }
+        
+        // ===== SNAKE GAME =====
+        let snake = [];
+        let food = {};
+        let direction = 'right';
+        let snakeInterval = null;
+        const GRID = 20;
+        const COLS = 20;
+        const ROWS = 20;
+        
+        function initSnake() {
+            snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
+            direction = 'right';
+            spawnFood();
+        }
+        
+        function spawnFood() {
+            do {
+                food = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
+            } while (snake.some(s => s.x === food.x && s.y === food.y));
+        }
+        
+        function drawSnake() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Grid
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.05)';
+            for (let i = 0; i < COLS; i++) {
+                for (let j = 0; j < ROWS; j++) {
+                    ctx.strokeRect(i * GRID, j * GRID, GRID, GRID);
+                }
+            }
+            
+            // Snake
+            snake.forEach((seg, i) => {
+                ctx.fillStyle = i === 0 ? '#10b981' : '#059669';
+                ctx.shadowColor = '#10b981';
+                ctx.shadowBlur = i === 0 ? 10 : 5;
+                ctx.beginPath();
+                ctx.roundRect(seg.x * GRID + 1, seg.y * GRID + 1, GRID - 2, GRID - 2, 4);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+            
+            // Food
+            ctx.fillStyle = '#ff0080';
+            ctx.shadowColor = '#ff0080';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(food.x * GRID + GRID/2, food.y * GRID + GRID/2, GRID/2 - 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+        
+        function moveSnake() {
+            const head = { ...snake[0] };
+            switch(direction) {
+                case 'up': head.y--; break;
+                case 'down': head.y++; break;
+                case 'left': head.x--; break;
+                case 'right': head.x++; break;
+            }
+            
+            // Wrap
+            if (head.x < 0) head.x = COLS - 1;
+            if (head.x >= COLS) head.x = 0;
+            if (head.y < 0) head.y = ROWS - 1;
+            if (head.y >= ROWS) head.y = 0;
+            
+            // Self collision
+            if (snake.some(s => s.x === head.x && s.y === head.y)) {
+                gameOver();
+                return;
+            }
+            
+            snake.unshift(head);
+            
+            if (head.x === food.x && head.y === food.y) {
+                gameScore += 10;
+                updateScore();
+                spawnFood();
+            } else {
+                snake.pop();
+            }
+            
+            drawSnake();
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (!gameRunning || currentGame !== 'snake') return;
+            switch(e.key) {
+                case 'ArrowUp': case 'w': case 'W': if (direction !== 'down') direction = 'up'; break;
+                case 'ArrowDown': case 's': case 'S': if (direction !== 'up') direction = 'down'; break;
+                case 'ArrowLeft': case 'a': case 'A': if (direction !== 'right') direction = 'left'; break;
+                case 'ArrowRight': case 'd': case 'D': if (direction !== 'left') direction = 'right'; break;
+            }
+            e.preventDefault();
+        });
+        
+        // ===== SPEED CLICKER =====
+        let clickCount = 0;
+        let clickerTimeout = null;
+        
+        function initClicker() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#121212';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#10b981';
+            ctx.font = 'bold 48px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('👆', canvas.width/2, canvas.height/2 - 20);
+            ctx.font = '20px Inter';
+            ctx.fillText('Click Here!', canvas.width/2, canvas.height/2 + 30);
+            
+            canvas.onclick = () => {
+                if (!gameRunning) return;
+                clickCount++;
+                gameScore = clickCount;
+                updateScore();
+                
+                // Flash effect
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 72px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(clickCount, canvas.width/2, canvas.height/2 + 10);
+            };
+        }
+        
+        // ===== MEMORY GAME =====
+        let memoryCards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let memoryLocked = false;
+        
+        const EMOJIS = ['🎭', '🎪', '🎨', '🎯', '🎲', '🎮', '🎸', '🎺'];
+        
+        function initMemory() {
+            const pairs = [...EMOJIS, ...EMOJIS];
+            memoryCards = pairs.sort(() => Math.random() - 0.5).map((emoji, i) => ({
+                id: i,
+                emoji,
+                flipped: false,
+                matched: false
+            }));
+            flippedCards = [];
+            matchedPairs = 0;
+            
+            drawMemory();
+        }
+        
+        function drawMemory() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const cols = 4;
+            const cellSize = 90;
+            const padding = 5;
+            const startX = (canvas.width - cols * cellSize) / 2;
+            const startY = (canvas.height - (4 * cellSize)) / 2;
+            
+            memoryCards.forEach((card, i) => {
+                const col = i % cols;
+                const row = Math.floor(i / cols);
+                const x = startX + col * cellSize;
+                const y = startY + row * cellSize;
+                
+                if (card.matched || card.flipped) {
+                    // Show emoji
+                    ctx.fillStyle = card.matched ? 'rgba(16, 185, 129, 0.2)' : '#1a1a2e';
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, cellSize - padding, cellSize - padding, 10);
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = card.matched ? '#10b981' : '#333';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    ctx.font = '36px serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(card.emoji, x + (cellSize - padding)/2, y + (cellSize - padding)/2);
+                } else {
+                    // Card back
+                    ctx.fillStyle = '#1a1a2e';
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, cellSize - padding, cellSize - padding, 10);
+                    ctx.fill();
+                    
+                    ctx.strokeStyle = 'rgba(16, 185, 129, 0.3)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.3)';
+                    ctx.font = '24px serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('?', x + (cellSize - padding)/2, y + (cellSize - padding)/2);
+                }
+            });
+        }
+        
+        function handleMemoryClick(e) {
+            if (!gameRunning || memoryLocked) return;
+            
+            const canvas = document.getElementById('gameCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const cols = 4;
+            const cellSize = 90;
+            const padding = 5;
+            const startX = (canvas.width - cols * cellSize) / 2;
+            const startY = (canvas.height - (4 * cellSize)) / 2;
+            
+            const col = Math.floor((x - startX) / cellSize);
+            const row = Math.floor((y - startY) / cellSize);
+            
+            if (col < 0 || col >= 4 || row < 0 || row >= 4) return;
+            
+            const index = row * cols + col;
+            const card = memoryCards[index];
+            
+            if (card.flipped || card.matched) return;
+            
+            card.flipped = true;
+            flippedCards.push(card);
+            drawMemory();
+            
+            if (flippedCards.length === 2) {
+                memoryLocked = true;
+                
+                if (flippedCards[0].emoji === flippedCards[1].emoji) {
+                    flippedCards[0].matched = true;
+                    flippedCards[1].matched = true;
+                    matchedPairs++;
+                    gameScore += 20;
+                    updateScore();
+                    
+                    if (matchedPairs === EMOJIS.length) {
+                        setTimeout(() => gameOver(), 500);
+                    }
+                }
+                
+                setTimeout(() => {
+                    flippedCards.forEach(c => { if (!c.matched) c.flipped = false; });
+                    flippedCards = [];
+                    memoryLocked = false;
+                    drawMemory();
+                }, 800);
+            }
+        }
+        
+        // ===== GAME CONTROL =====
+        function initGame() {
+            gameScore = 0;
+            gameTimer = 0;
+            updateScore();
+            
+            switch(currentGame) {
+                case 'snake': initSnake(); drawSnake(); break;
+                case 'clicker': clickCount = 0; initClicker(); break;
+                case 'memory': initMemory(); break;
+            }
+        }
+        
+        function startGame() {
+            gameRunning = true;
+            document.getElementById('gameActionBtn').textContent = '⏸ Playing...';
+            document.getElementById('gameActionBtn').disabled = true;
+            
+            gameInterval = setInterval(() => {
+                gameTimer++;
+                document.getElementById('gameTime').textContent = gameTimer + 's';
+                
+                if (currentGame === 'snake') {
+                    moveSnake();
+                }
+                
+                // Auto-end for clicker
+                if (currentGame === 'clicker' && gameTimer >= 10) {
+                    gameOver();
+                }
+                
+                // Auto-end for snake after 30s
+                if (currentGame === 'snake' && gameTimer >= 30) {
+                    gameOver();
+                }
+            }, currentGame === 'snake' ? 150 : 1000);
+        }
+        
+        function stopGame() {
+            gameRunning = false;
+            clearInterval(gameInterval);
+            if (snakeInterval) clearInterval(snakeInterval);
+            document.getElementById('gameActionBtn').textContent = '▶ Start Game';
+            document.getElementById('gameActionBtn').disabled = false;
+        }
+        
+        function gameOver() {
+            stopGame();
+            
+            // Calculate reward
+            let reward = 0;
+            if (currentGame === 'snake' && gameScore >= 50) reward = 10;
+            if (currentGame === 'clicker' && gameScore >= 50) reward = 10;
+            if (currentGame === 'memory' && matchedPairs === EMOJIS.length) reward = 15;
+            
+            selectedReward = reward;
+            document.getElementById('gameReward').textContent = reward;
+            
+            // Show claim section
+            setTimeout(() => {
+                document.getElementById('gameArea').classList.remove('active');
+                document.getElementById('claimSection').classList.add('active');
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step2').classList.add('completed');
+                document.getElementById('step3').classList.add('active');
+                
+                document.getElementById('claimScore').textContent = gameScore;
+                document.getElementById('claimReward').textContent = reward + ' RITUAL';
+                
+                document.getElementById('cardTitle').textContent = reward > 0 ? '🎉 Great Job!' : '😅 Try Again';
+                document.getElementById('cardSubtitle').textContent = reward > 0 ? 'Claim your tokens!' : 'Score higher to earn tokens';
+                
+                if (reward > 0) {
+                    showToast('✅', 'Score: ' + gameScore + ' — You earned ' + reward + ' RITUAL!');
+                } else {
+                    showToast('❌', 'Score too low. Need 50+ to earn tokens!');
+                }
+            }, 500);
+        }
+        
+        function updateScore() {
+            document.getElementById('gameScore').textContent = gameScore;
+            let reward = 0;
+            if (currentGame === 'snake' && gameScore >= 50) reward = 10;
+            if (currentGame === 'clicker' && gameScore >= 50) reward = 10;
+            if (currentGame === 'memory' && matchedPairs === EMOJIS.length) reward = 15;
+            document.getElementById('gameReward').textContent = reward;
+        }
+        
+        // ===== CLAIM =====
+        function claimTokens() {
+            const address = document.getElementById('walletInput').value.trim();
+            
+            if (!address) {
+                showToast('❌', 'Please enter your wallet address');
+                return;
+            }
+            
+            if (!address.startsWith('0x') || address.length !== 42) {
+                showToast('❌', 'Invalid wallet address');
+                return;
+            }
+            
+            if (selectedReward <= 0) {
+                showToast('❌', 'No reward to claim. Play again!');
+                return;
+            }
+            
+            // Simulate claim
+            showToast('🔗', 'Claiming tokens...');
+            
+            setTimeout(() => {
+                document.getElementById('modalAmount').textContent = selectedReward + ' RITUAL';
+                document.getElementById('modalAddress').textContent = address.slice(0, 6) + '...' + address.slice(-4);
+                document.getElementById('successModal').classList.add('active');
+            }, 1500);
+        }
+        
+        function resetFaucet() {
+            currentGame = null;
+            gameScore = 0;
+            gameTimer = 0;
+            selectedReward = 0;
+            document.getElementById('walletInput').value = '';
+            
+            document.getElementById('gameSelection').style.display = 'block';
+            document.getElementById('gameArea').classList.remove('active');
+            document.getElementById('claimSection').classList.remove('active');
+            
+            document.getElementById('step1').className = 'step active';
+            document.getElementById('step2').className = 'step';
+            document.getElementById('step3').className = 'step';
+            
+            document.getElementById('cardTitle').textContent = '🎮 Select a Game';
+            document.getElementById('cardSubtitle').textContent = 'Choose your challenge';
+            
+            document.querySelectorAll('.game-card').forEach(c => c.classList.remove('selected'));
+        }
+        
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('active');
+            resetFaucet();
+        }
+        
+        // ===== UTILS =====
+        function showToast(icon, text) {
+            document.getElementById('toastIcon').textContent = icon;
+            document.getElementById('toastText').textContent = text;
+            document.getElementById('toast').classList.remove('hidden');
+            setTimeout(() => document.getElementById('toast').classList.add('hidden'), 3000);
+        }
+        
+        // Setup memory click
+        document.getElementById('gameCanvas').addEventListener('click', handleMemoryClick);
+    </script>
+</body>
+</html>
