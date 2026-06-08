@@ -510,6 +510,111 @@
             transform: scale(1.1);
         }
         
+
+        /* Leaderboard */
+        .leaderboard {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .leaderboard-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .leaderboard-list {
+            list-style: none;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .leaderboard-rank {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            margin-right: 12px;
+        }
+        
+        .leaderboard-rank.gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; }
+        .leaderboard-rank.silver { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #000; }
+        .leaderboard-rank.bronze { background: linear-gradient(135deg, #cd7f32, #b87333); color: #fff; }
+        .leaderboard-rank.normal { background: var(--bg-card); color: var(--text-secondary); }
+        
+        .leaderboard-info {
+            flex: 1;
+        }
+        
+        .leaderboard-address {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+        
+        .leaderboard-date {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+        
+        .leaderboard-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        
+        .leaderboard-empty {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+        }
+        
+        .clear-btn {
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: none;
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .clear-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
         .sound-toggle.muted {
             opacity: 0.5;
         }
@@ -635,6 +740,18 @@
             </div>
         </div>
         
+
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <div class="leaderboard-header">
+                <div class="leaderboard-title">🏆 Leaderboard</div>
+                <button class="clear-btn" onclick="clearLeaderboard()">Clear</button>
+            </div>
+            <ul class="leaderboard-list" id="leaderboardList">
+                <li class="leaderboard-empty">No scores yet. Be the first!</li>
+            </ul>
+        </div>
+        
         <!-- Footer -->
         <div class="footer">
             <p>Powered by <a href="https://ritual.net" target="_blank">Ritual Network</a> • Chain ID: 1979</p>
@@ -663,6 +780,62 @@
     <script>
 
 
+
+        // ===== LEADERBOARD =====
+        function getLeaderboard() {
+            return JSON.parse(localStorage.getItem('siggyLeaderboard') || '[]');
+        }
+        
+        function addToLeaderboard(scoreVal, coinsVal) {
+            const addr = walletAddress || 'Anonymous';
+            const entry = {
+                address: addr,
+                short: addr === 'Anonymous' ? 'Anonymous' : addr.slice(0, 6) + '...' + addr.slice(-4),
+                score: scoreVal,
+                coins: coinsVal,
+                date: new Date().toLocaleDateString()
+            };
+            
+            let lb = getLeaderboard();
+            lb.push(entry);
+            lb.sort((a, b) => b.score - a.score);
+            lb = lb.slice(0, 10); // Keep top 10
+            localStorage.setItem('siggyLeaderboard', JSON.stringify(lb));
+            renderLeaderboard();
+        }
+        
+        function renderLeaderboard() {
+            const lb = getLeaderboard();
+            const list = document.getElementById('leaderboardList');
+            
+            if (lb.length === 0) {
+                list.innerHTML = '<li class="leaderboard-empty">No scores yet. Be the first!</li>';
+                return;
+            }
+            
+            list.innerHTML = lb.map((entry, i) => {
+                const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+                return `
+                    <li class="leaderboard-item">
+                        <div class="leaderboard-rank ${rankClass}">${medal}</div>
+                        <div class="leaderboard-info">
+                            <div class="leaderboard-address">${entry.short}</div>
+                            <div class="leaderboard-date">${entry.date}</div>
+                        </div>
+                        <div class="leaderboard-score">${entry.score}</div>
+                    </li>
+                `;
+            }).join('');
+        }
+        
+        function clearLeaderboard() {
+            if (confirm('Clear all scores?')) {
+                localStorage.removeItem('siggyLeaderboard');
+                renderLeaderboard();
+            }
+        }
+        
         // ===== SOUND EFFECTS =====
         let soundEnabled = true;
         let audioCtx = null;
@@ -1195,6 +1368,7 @@
         function gameOver() {
             gameState = 'over';
             playSound('hit');
+            if (score > 0) addToLeaderboard(score, coins);
             if (score > bestScore) {
                 bestScore = score;
                 localStorage.setItem('siggyBest', bestScore);
@@ -1292,6 +1466,7 @@
         for (let i = 0; i < 4; i++) spawnCloud();
         drawBackground();
         drawSiggy();
+        renderLeaderboard();
     </script>
 </body>
 </html>
