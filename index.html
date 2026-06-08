@@ -686,71 +686,6 @@ anvas>
 
     <script>
 
-        // ===== WALLET =====
-        let walletAddress = '';
-        let provider = null;
-        let signer = null;
-        
-        async function connectWallet() {
-            if (walletAddress) {
-                walletAddress = '';
-                provider = null;
-                signer = null;
-                document.getElementById('connectBtn').classList.remove('connected');
-                document.getElementById('connectText').textContent = 'Connect Wallet';
-                showToast('🔌', 'Wallet disconnected');
-                return;
-            }
-            if (typeof window.ethereum === 'undefined') {
-                showToast('❌', 'Install MetaMask!');
-                setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1000);
-                return;
-            }
-            try {
-                showToast('🔗', 'Connecting...');
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (!accounts || accounts.length === 0) return;
-                provider = new ethers.BrowserProvider(window.ethereum);
-                signer = await provider.getSigner();
-                walletAddress = accounts[0];
-                const short = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
-                document.getElementById('connectText').textContent = short;
-                document.getElementById('connectBtn').classList.add('connected');
-                showToast('✅', 'Connected: ' + short);
-            } catch (err) {
-                console.error(err);
-                if (err.code === 4001) showToast('❌', 'Rejected');
-                else showToast('❌', err.message || 'Failed');
-            }
-        }
-        
-        // ===== SOUND =====
-        let soundEnabled = true;
-        let audioCtx = null;
-        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-        function playSound(t) {
-            if (!soundEnabled || !audioCtx) return;
-            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-            o.connect(g); g.connect(audioCtx.destination);
-            if (t === 'jump') { o.frequency.setValueAtTime(300, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime+0.1); g.gain.setValueAtTime(0.3, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.15); o.start(); o.stop(audioCtx.currentTime+0.15); }
-            else if (t === 'coin') { o.frequency.setValueAtTime(800, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime+0.1); g.gain.setValueAtTime(0.2, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.2); o.start(); o.stop(audioCtx.currentTime+0.2); }
-            else if (t === 'hit') { o.type='sawtooth'; o.frequency.setValueAtTime(200, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime+0.3); g.gain.setValueAtTime(0.4, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.3); o.start(); o.stop(audioCtx.currentTime+0.3); }
-        }
-        
-        // ===== ACHIEVEMENTS =====
-        let gamesPlayed = 0, totalCoins = 0, usedDoubleJump = false;
-        function getAch() { return JSON.parse(localStorage.getItem('siggyAch') || '[]'); }
-        function unlockAch(id) { const l=getAch(); if(l.includes(id))return; l.push(id); localStorage.setItem('siggyAch',JSON.stringify(l)); const e=document.getElementById(id); if(e){e.classList.remove('locked');e.classList.add('unlocked');} }
-        function checkAch(sc,co) { if(sc>=1)unlockAch('ach-first'); if(sc>=50)unlockAch('ach-50'); if(sc>=100)unlockAch('ach-100'); if(sc>=200)unlockAch('ach-200'); if(sc>=500)unlockAch('ach-500'); if(co>=10)unlockAch('ach-coin10'); if(co>=50)unlockAch('ach-coin50'); if(usedDoubleJump)unlockAch('ach-double'); if(gamesPlayed>=10)unlockAch('ach-play10'); }
-        function renderAch() { getAch().forEach(id=>{const e=document.getElementById(id);if(e){e.classList.remove('locked');e.classList.add('unlocked');}}); }
-        function shareScore() { window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('🐱 I scored '+score+' in Siggy Runner on Ritual Faucet! 🚀'),'_blank'); unlockAch('ach-share'); }
-        
-        // ===== LEADERBOARD =====
-        function getLB() { return JSON.parse(localStorage.getItem('siggyLB')||'[]'); }
-        function addLB(sc) { const a=walletAddress||'Anonymous'; const e={short:a==='Anonymous'?'Anon':a.slice(0,6)+'...'+a.slice(-4),score:sc,date:new Date().toLocaleDateString()}; let lb=getLB(); lb.push(e); lb.sort((a,b)=>b.score-a.score); lb=lb.slice(0,10); localStorage.setItem('siggyLB',JSON.stringify(lb)); renderLB(); }
-        function renderLB() { const lb=getLB(); const l=document.getElementById('lbList'); if(!l)return; if(lb.length===0){l.innerHTML='<li class="lb-empty">No scores yet</li>';return;} l.innerHTML=lb.map((e,i)=>{const rc=i===0?'gold':i===1?'silver':i===2?'bronze':'';const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);return '<li class="lb-item"><div class="lb-rank '+rc+'">'+m+'</div><div class="lb-addr">'+e.short+'</div><div class="lb-score-val">'+e.score+'</div></li>';}).join(''); }
-        function clearLeaderboard() { if(confirm('Clear all?')){localStorage.removeItem('siggyLB');renderLB();} }
-        
         // ===== CONFIG =====
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -1257,6 +1192,71 @@ anvas>
         drawSiggy();
         renderLB();
         renderAch();
+
+        // ===== WALLET =====
+        let walletAddress = '';
+        let provider = null;
+        let signer = null;
+        
+        async function connectWallet() {
+            if (walletAddress) {
+                walletAddress = '';
+                provider = null;
+                signer = null;
+                document.getElementById('connectBtn').classList.remove('connected');
+                document.getElementById('connectText').textContent = 'Connect Wallet';
+                showToast('🔌', 'Wallet disconnected');
+                return;
+            }
+            if (typeof window.ethereum === 'undefined') {
+                showToast('❌', 'Install MetaMask!');
+                setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1000);
+                return;
+            }
+            try {
+                showToast('🔗', 'Connecting...');
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (!accounts || accounts.length === 0) return;
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                walletAddress = accounts[0];
+                const short = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+                document.getElementById('connectText').textContent = short;
+                document.getElementById('connectBtn').classList.add('connected');
+                showToast('✅', 'Connected: ' + short);
+            } catch (err) {
+                console.error(err);
+                if (err.code === 4001) showToast('❌', 'Rejected');
+                else showToast('❌', err.message || 'Failed');
+            }
+        }
+        
+        // ===== SOUND =====
+        let soundEnabled = true;
+        let audioCtx = null;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playSound(t) {
+            if (!soundEnabled || !audioCtx) return;
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            if (t === 'jump') { o.frequency.setValueAtTime(300, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime+0.1); g.gain.setValueAtTime(0.3, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.15); o.start(); o.stop(audioCtx.currentTime+0.15); }
+            else if (t === 'coin') { o.frequency.setValueAtTime(800, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime+0.1); g.gain.setValueAtTime(0.2, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.2); o.start(); o.stop(audioCtx.currentTime+0.2); }
+            else if (t === 'hit') { o.type='sawtooth'; o.frequency.setValueAtTime(200, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime+0.3); g.gain.setValueAtTime(0.4, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.3); o.start(); o.stop(audioCtx.currentTime+0.3); }
+        }
+        
+        // ===== ACHIEVEMENTS =====
+        let gamesPlayed = 0, totalCoins = 0, usedDoubleJump = false;
+        function getAch() { return JSON.parse(localStorage.getItem('siggyAch') || '[]'); }
+        function unlockAch(id) { const l=getAch(); if(l.includes(id))return; l.push(id); localStorage.setItem('siggyAch',JSON.stringify(l)); const e=document.getElementById(id); if(e){e.classList.remove('locked');e.classList.add('unlocked');} }
+        function checkAch(sc,co) { if(sc>=1)unlockAch('ach-first'); if(sc>=50)unlockAch('ach-50'); if(sc>=100)unlockAch('ach-100'); if(sc>=200)unlockAch('ach-200'); if(sc>=500)unlockAch('ach-500'); if(co>=10)unlockAch('ach-coin10'); if(co>=50)unlockAch('ach-coin50'); if(usedDoubleJump)unlockAch('ach-double'); if(gamesPlayed>=10)unlockAch('ach-play10'); }
+        function renderAch() { getAch().forEach(id=>{const e=document.getElementById(id);if(e){e.classList.remove('locked');e.classList.add('unlocked');}}); }
+        function shareScore() { window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('🐱 I scored '+score+' in Siggy Runner on Ritual Faucet! 🚀'),'_blank'); unlockAch('ach-share'); }
+        
+        // ===== LEADERBOARD =====
+        function getLB() { return JSON.parse(localStorage.getItem('siggyLB')||'[]'); }
+        function addLB(sc) { const a=walletAddress||'Anonymous'; const e={short:a==='Anonymous'?'Anon':a.slice(0,6)+'...'+a.slice(-4),score:sc,date:new Date().toLocaleDateString()}; let lb=getLB(); lb.push(e); lb.sort((a,b)=>b.score-a.score); lb=lb.slice(0,10); localStorage.setItem('siggyLB',JSON.stringify(lb)); renderLB(); }
+        function renderLB() { const lb=getLB(); const l=document.getElementById('lbList'); if(!l)return; if(lb.length===0){l.innerHTML='<li class="lb-empty">No scores yet</li>';return;} l.innerHTML=lb.map((e,i)=>{const rc=i===0?'gold':i===1?'silver':i===2?'bronze':'';const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);return '<li class="lb-item"><div class="lb-rank '+rc+'">'+m+'</div><div class="lb-addr">'+e.short+'</div><div class="lb-score-val">'+e.score+'</div></li>';}).join(''); }
+        function clearLeaderboard() { if(confirm('Clear all?')){localStorage.removeItem('siggyLB');renderLB();} }
     </script>
 </body>
 </html>
