@@ -1417,6 +1417,10 @@
             document.getElementById('claimSection').classList.remove('hidden');
             document.getElementById('claimScore').textContent = score;
             document.getElementById('claimReward').textContent = reward + ' RITUAL';
+            // Auto scroll to claim section
+            setTimeout(function() {
+                document.getElementById('claimSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         }
         
         function claimTokens() {
