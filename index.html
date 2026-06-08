@@ -404,7 +404,7 @@
         }
         
         .claim-section.hidden { display: none; }
-        .claim-section { animation: fadeIn 0.3s ease; border: 2px solid var(--accent-green); box-shadow: 0 0 20px rgba(16,185,129,0.3); }
+        .claim-section:not(.hidden) { animation: fadeIn 0.3s ease; border: 2px solid var(--accent-green); box-shadow: 0 0 20px rgba(16,185,129,0.3); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
         .claim-title {
