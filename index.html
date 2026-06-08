@@ -662,43 +662,11 @@
             </button>
         </div>
         
-        <!-- Game -->
-        <div class="game-wrapper">
-            <div class="game-header">
-                <div class="game-title">🐱 Siggy Runner</div>
-                <div class="game-stats">
-                    <div class="stat">
-                        <div class="stat-label">Score</div>
-                        <div class="stat-value" id="score">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Best</div>
-                        <div class="stat-value" id="bestScore">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Coins</div>
-                        <div class="stat-value" id="coins">0</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="canvas-container">
-                <canvas id="gameCanvas" width="800" height="350"></canvas>
-                
-                <!-- Start Overlay -->
-                <div class="overlay" id="startOverlay">
-                    <div class="overlay-content">
-                        <img src="siggy.jpeg" alt="Siggy" class="overlay-mascot">
-                        <div class="overlay-title">🐱 Siggy Runner</div>
-                        <div class="overlay-subtitle">Help Siggy run and collect coins!</div>
-                        <button class="btn btn-primary" onclick="startGame()">▶ Start Running</button>
-                    </div>
-                </div>
-                
-                <!-- Game Over Overlay -->
-                <div class="overlay hidden" id="gameOverOverlay">
-                    <div class="overlay-content">
-                        <div class="overlay-title">💥 Game Over!</div>
+        <!--
+
+... [OUTPUT TRUNCATED - 1696 chars omitted out of 51696 total] ...
+
+       <div class="overlay-title">💥 Game Over!</div>
                         <div class="overlay-subtitle">Siggy tripped!</div>
                         <div class="overlay-score" id="finalScore">0</div>
                         <div class="overlay-reward">Reward: <span id="finalReward">0 RITUAL</span></div>
@@ -917,17 +885,33 @@
                 return;
             }
             
+            // Check for MetaMask or other wallets
             if (typeof window.ethereum === 'undefined') {
-                showToast('❌', 'Install MetaMask first!');
-                window.open('https://metamask.io/', '_blank');
+                showToast('❌', 'Install MetaMask!');
+                // Try to open MetaMask install page
+                setTimeout(() => {
+                    window.open('https://metamask.io/download/', '_blank');
+                }, 1000);
                 return;
             }
             
             try {
-                showToast('🔗', 'Connecting...');
+                showToast('🔗', 'Connecting to MetaMask...');
+                
+                // Request account access
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                if (!accounts || accounts.length === 0) {
+                    showToast('❌', 'No accounts found');
+                    return;
+                }
+                
+                // Get provider and signer
                 provider = new ethers.BrowserProvider(window.ethereum);
                 signer = await provider.getSigner();
-                walletAddress = await signer.getAddress();
+                walletAddress = accounts[0];
                 
                 const short = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
                 document.getElementById('connectText').textContent = short;
@@ -937,30 +921,46 @@
                 showToast('✅', 'Connected: ' + short);
                 await switchToRitual();
             } catch (err) {
-                console.error(err);
-                showToast('❌', 'Connection failed');
+                console.error('Wallet error:', err);
+                if (err.code === 4001) {
+                    showToast('❌', 'Connection rejected');
+                } else {
+                    showToast('❌', 'Error: ' + (err.message || 'Connection failed'));
+                }
             }
         }
         
         async function switchToRitual() {
-            const chainId = '0x7b7';
+            const chainId = '0x7b7'; // 1979 in hex
             try {
                 await window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId }]
                 });
-            } catch (e) {
-                if (e.code === 4902) {
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [{
-                            chainId,
-                            chainName: 'Ritual Testnet',
-                            nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-                            rpcUrls: ['https://rpc.test.ritual.community'],
-                            blockExplorerUrls: ['https://explorer.test.ritual.community']
-                        }]
-                    });
+                showToast('🔗', 'Switched to Ritual Testnet');
+            } catch (switchError) {
+                console.error('Switch error:', switchError);
+                // Chain not added, try to add it
+                if (switchError.code === 4902) {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId,
+                                chainName: 'Ritual Testnet',
+                                nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+                                rpcUrls: ['https://rpc.test.ritual.community'],
+                                blockExplorerUrls: ['https://explorer.test.ritual.community']
+                            }]
+                        });
+                        showToast('✅', 'Ritual Testnet added!');
+                    } catch (addErr) {
+                        console.error('Add chain error:', addErr);
+                        showToast('⚠️', 'Please add Ritual Testnet manually');
+                    }
+                } else {
+                    // User rejected or other error
+                    console.error('Chain switch failed:', switchError);
                 }
             }
         }
