@@ -451,13 +451,44 @@
         
         .footer a { color: var(--accent-green); text-decoration: none; }
 
-        /* Wallet Connect */
+        /* Clean Animations */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 15px 5px rgba(16, 185, 129, 0.15); }
+        }
+        
+        .header h1 {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease infinite;
+        }
+        
+        .btn-primary {
+            animation: pulse 2s infinite;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn {
+            transition: all 0.2s ease;
+        }
+        
+        /* Wallet Bar */
         .wallet-bar {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            margin-bottom: 15px;
         }
         
         .wallet-btn {
@@ -477,7 +508,6 @@
         
         .wallet-btn:hover {
             border-color: var(--accent-green);
-            transform: translateY(-2px);
         }
         
         .wallet-btn.connected {
@@ -486,369 +516,171 @@
         }
         
         .wallet-btn svg {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
         }
         
-        /* Sound Toggle */
-        .sound-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 50;
-            font-size: 18px;
-            transition: all 0.2s;
-        }
-        
-        .sound-toggle:hover {
-            border-color: var(--accent-green);
-            transform: scale(1.1);
-        }
-        
-        .sound-toggle.muted {
-            opacity: 0.5;
-        }
-        
-        /* Leaderboard */
-        .leaderboard {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
-        .leaderboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .leaderboard-title {
-            font-size: 18px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .leaderboard-list {
-            list-style: none;
-        }
-        
-        .leaderboard-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .leaderboard-rank {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            margin-right: 12px;
-        }
-        
-        .leaderboard-rank.gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; }
-        .leaderboard-rank.silver { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #000; }
-        .leaderboard-rank.bronze { background: linear-gradient(135deg, #cd7f32, #b87333); color: #fff; }
-        .leaderboard-rank.normal { background: var(--bg-card); color: var(--text-secondary); }
-        
-        .leaderboard-info { flex: 1; }
-        .leaderboard-address { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
-        .leaderboard-date { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-        .leaderboard-score { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--accent-green); }
-        .leaderboard-empty { text-align: center; padding: 30px; color: var(--text-secondary); }
-        
-        .clear-btn {
-            font-size: 12px; color: var(--text-secondary); background: none;
-            border: 1px solid var(--border); padding: 4px 10px; border-radius: 6px;
-            cursor: pointer; transition: all 0.2s;
-        }
-        
-        .clear-btn:hover { border-color: #ef4444; color: #ef4444; }
-
-        /* Enhanced Animations */
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            50% { box-shadow: 0 0 20px 10px rgba(16, 185, 129, 0.1); }
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% center; }
-            100% { background-position: 200% center; }
-        }
-        
-        @keyframes floatUp {
-            0% { transform: translateY(20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes glow {
-            0%, 100% { filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5)); }
-            50% { filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.8)); }
-        }
-        
-        .game-wrapper {
-            animation: floatUp 0.6s ease-out;
-        }
-        
-        .wallet-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .wallet-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn:hover::before {
-            left: 100%;
-        }
-        
-        .btn-primary {
-            animation: pulse 2s infinite;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
-        }
-        
-        .btn-primary:active {
-            transform: translateY(-1px) scale(0.98);
-        }
-        
-        .leaderboard-item {
-            transition: all 0.3s ease;
-        }
-        
-        .leaderboard-item:hover {
-            transform: translateX(8px);
-            background: rgba(16, 185, 129, 0.1);
-            border-left: 3px solid var(--accent-green);
-        }
-        
-        .stat {
-            transition: all 0.3s ease;
-        }
-        
-        .stat:hover {
-            transform: scale(1.05);
-            border-color: var(--accent-green);
-        }
-        
-        .stat-value {
-            transition: all 0.2s ease;
-        }
-        
-        .stat-value.bump {
-            animation: bounce 0.3s ease;
-        }
-        
-        .header h1 {
-            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light), #00ff88, var(--accent-green));
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientShift 4s ease infinite;
-        }
-        
-        .mascot-row {
-            transition: all 0.3s ease;
-        }
-        
-        .mascot-row:hover {
-            transform: scale(1.05);
-            border-color: var(--accent-green);
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
-        }
-        
-        .controls-info {
-            transition: all 0.3s ease;
-        }
-        
-        .controls-info:hover {
-            border-color: var(--accent-green);
-            color: var(--accent-green);
-        }
-        
-        .footer {
-            transition: all 0.3s ease;
-        }
-        
-        .footer a:hover {
-            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
-        }
-        
-        /* Game Over Explosion */
-        @keyframes explode {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(0); opacity: 0; }
-        }
-        
-        .game-over-particle {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            animation: explode 0.6s ease-out forwards;
-        }
-        
-        /* Score Counter Animation */
-        @keyframes countUp {
-            0% { transform: translateY(10px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        
-        .score-animate {
-            animation: countUp 0.3s ease;
-        }
-        
-        /* Achievements */
-        .achievements-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
-        .achievements-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .achievements-title {
-            font-size: 18px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .achievements-grid {
+        /* Bottom Row - Achievements & Leaderboard side by side */
+        .bottom-row {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
         }
         
-        .achievement {
-            background: var(--bg-secondary);
+        .bottom-card {
+            background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 15px;
+            padding: 16px;
+        }
+        
+        .bottom-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        /* Achievements Compact */
+        .ach-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        
+        .ach-item {
             text-align: center;
-            transition: all 0.3s ease;
+            padding: 8px 4px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            transition: all 0.2s;
             cursor: default;
         }
         
-        .achievement.unlocked {
-            border-color: var(--accent-green);
+        .ach-item.unlocked {
+            border: 1px solid var(--accent-green);
             background: rgba(16, 185, 129, 0.08);
         }
         
-        .achievement.locked {
-            opacity: 0.5;
-            filter: grayscale(100%);
+        .ach-item.locked {
+            opacity: 0.4;
         }
         
-        .achievement:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        .ach-item:hover {
+            transform: translateY(-2px);
         }
         
-        .achievement.unlocked:hover {
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-        }
-        
-        .achievement-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-        
-        .achievement-name {
-            font-size: 12px;
-            font-weight: 600;
+        .ach-icon {
+            font-size: 20px;
             margin-bottom: 4px;
         }
         
-        .achievement-desc {
-            font-size: 10px;
+        .ach-name {
+            font-size: 9px;
             color: var(--text-secondary);
+            line-height: 1.2;
         }
         
-        .achievement.unlocked .achievement-icon {
-            animation: glow 2s ease infinite;
+        .ach-item.unlocked .ach-name {
+            color: var(--accent-green);
         }
         
-        /* Share Button */
+        /* Leaderboard Compact */
+        .lb-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .lb-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        
+        .lb-rank {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 10px;
+            background: var(--bg-card);
+        }
+        
+        .lb-rank.gold { background: #ffd700; color: #000; }
+        .lb-rank.silver { background: #c0c0c0; color: #000; }
+        .lb-rank.bronze { background: #cd7f32; color: #fff; }
+        
+        .lb-addr {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        
+        .lb-score {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        
+        .lb-empty {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        
+        .clear-btn {
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: none;
+            border: 1px solid var(--border);
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .clear-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        /* Share */
         .share-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
+            gap: 4px;
+            padding: 8px 14px;
             background: #1da1f2;
             color: white;
             border: none;
-            border-radius: 20px;
+            border-radius: 8px;
             font-size: 13px;
-            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
         }
         
         .share-btn:hover {
             background: #0d8bd9;
-            transform: scale(1.05);
         }
         
-        .share-btn svg {
-            width: 16px;
-            height: 16px;
+        @media (max-width: 600px) {
+            .bottom-row {
+                grid-template-columns: 1fr;
+            }
+            .ach-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
         }
         
         @media (max-width: 600px) {
@@ -862,7 +694,6 @@
     </style>
 </head>
 <body>
-    <div class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</div>
     <div class="bg-grid"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -882,9 +713,9 @@
         </div>
         
         <!-- Wallet Connect -->
-        <div class="wallet-bar" id="walletBar">
+        <div class="wallet-bar">
             <button class="wallet-btn" id="connectBtn" onclick="connectWallet()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#f6851b"/><path d="M17.2 5.8L13.1 7.7l-.8-1.8L17.2 5.8zM6.8 5.8l4.1 1.9.8-1.8L6.8 5.8z" fill="#e2761b" stroke="#e2761b" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#f6851b"/><path d="M17.2 5.8L13.1 7.7l-.8-1.8L17.2 5.8zM6.8 5.8l4.1 1.9.8-1.8L6.8 5.8z" fill="#e2761b"/></svg>
                 <span id="connectText">Connect Wallet</span>
             </button>
         </div>
@@ -899,13 +730,30 @@
                         <div class="stat-value" id="score">0</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-label">
-
-... [OUTPUT TRUNCATED - 61 chars omitted out of 50061 total] ...
-
-al] ...
-
-rlay -->
+                        <div class="stat-label">Best</div>
+                        <div class="stat-value" id="bestScore">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Coins</div>
+                        <div class="stat-value" id="coins">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="gameCanvas" width="800" height="350"></canvas>
+                
+                <!-- Start Overlay -->
+                <div class="overlay" id="startOverlay">
+                    <div class="overlay-content">
+                        <img src="siggy.jpeg" alt="Siggy" class="overlay-mascot">
+                        <div class="overlay-title">🐱 Siggy Runner</div>
+                        <div class="overlay-subtitle">Help Siggy run and collect coins!</div>
+                        <button class="btn btn-primary" onclick="startGame()">▶ Start Running</button>
+                    </div>
+                </div>
+                
+                <!-- Game Over Overlay -->
                 <div class="overlay hidden" id="gameOverOverlay">
                     <div class="overlay-content">
                         <div class="overlay-title">💥 Game Over!</div>
@@ -913,8 +761,8 @@ rlay -->
                         <div class="overlay-score" id="finalScore">0</div>
                         <div class="overlay-reward">Reward: <span id="finalReward">0 RITUAL</span></div>
                         <button class="btn btn-primary" onclick="restartGame()">🔄 Try Again</button>
-                        <button class="btn btn-secondary" onclick="showClaimSection()">🎁 Claim Tokens</button>
-                        <button class="share-btn" onclick="shareScore()">🐦 Share</button>
+                        <button class="btn btn-secondary" onclick="showClaimSection()">🎁 Claim</button>
+                        <button class="share-btn" onclick="shareScore()">🐦 Tweet</button>
                     </div>
                 </div>
             </div>
@@ -928,99 +776,36 @@ rlay -->
             </div>
         </div>
         
-        <!-- Claim Section -->
-        <div class="claim-section hidden" id="claimSection">
-            <div class="claim-title">🎁 Claim Your Tokens</div>
-            <div class="claim-info">
-                <div class="claim-info-item">
-                    <div class="claim-info-label">Score</div>
-                    <div class="claim-info-value" id="claimScore">0</div>
-                </div>
-                <div class="claim-info-item">
-                    <div class="claim-info-label">Reward</div>
-                    <div class="claim-info-value" id="claimReward">0 RITUAL</div>
-                </div>
-            </div>
-            <div class="input-group">
-                <label>Wallet Address (EVM)</label>
-                <input type="text" id="walletInput" placeholder="0x..." maxlength="42">
-            </div>
-            <div style="text-align: center;">
-                <button class="btn btn-primary" onclick="claimTokens()">🎁 Claim Now</button>
-                <button class="btn btn-secondary" onclick="resetAll()">🔄 Play Again</button>
-            </div>
-        </div>
-        
 
-
-        <!-- Achievements -->
-        <div class="achievements-section">
-            <div class="achievements-header">
-                <div class="achievements-title">🏅 Achievements</div>
-            </div>
-            <div class="achievements-grid" id="achievementsGrid">
-                <div class="achievement locked" id="ach-first-run" data-score="1">
-                    <div class="achievement-icon">🐱</div>
-                    <div class="achievement-name">First Run</div>
-                    <div class="achievement-desc">Play your first game</div>
-                </div>
-                <div class="achievement locked" id="ach-score-50" data-score="50">
-                    <div class="achievement-icon">⭐</div>
-                    <div class="achievement-name">Rising Star</div>
-                    <div class="achievement-desc">Score 50 points</div>
-                </div>
-                <div class="achievement locked" id="ach-score-100" data-score="100">
-                    <div class="achievement-icon">🔥</div>
-                    <div class="achievement-name">On Fire</div>
-                    <div class="achievement-desc">Score 100 points</div>
-                </div>
-                <div class="achievement locked" id="ach-score-200" data-score="200">
-                    <div class="achievement-icon">💎</div>
-                    <div class="achievement-name">Diamond</div>
-                    <div class="achievement-desc">Score 200 points</div>
-                </div>
-                <div class="achievement locked" id="ach-score-500" data-score="500">
-                    <div class="achievement-icon">👑</div>
-                    <div class="achievement-name">King Siggy</div>
-                    <div class="achievement-desc">Score 500 points</div>
-                </div>
-                <div class="achievement locked" id="ach-coins-10" data-coins="10">
-                    <div class="achievement-icon">🪙</div>
-                    <div class="achievement-name">Coin Collector</div>
-                    <div class="achievement-desc">Collect 10 coins</div>
-                </div>
-                <div class="achievement locked" id="ach-coins-50" data-coins="50">
-                    <div class="achievement-icon">💰</div>
-                    <div class="achievement-name">Rich Cat</div>
-                    <div class="achievement-desc">Collect 50 coins</div>
-                </div>
-                <div class="achievement locked" id="ach-double-jump" data-special="double-jump">
-                    <div class="achievement-icon">🦘</div>
-                    <div class="achievement-name">Double Trouble</div>
-                    <div class="achievement-desc">Use double jump</div>
-                </div>
-                <div class="achievement locked" id="ach-play-10" data-special="play-10">
-                    <div class="achievement-icon">🎮</div>
-                    <div class="achievement-name">Dedicated</div>
-                    <div class="achievement-desc">Play 10 games</div>
-                </div>
-                <div class="achievement locked" id="ach-share" data-special="share">
-                    <div class="achievement-icon">📢</div>
-                    <div class="achievement-name">Influencer</div>
-                    <div class="achievement-desc">Share your score</div>
+        <!-- Bottom Row -->
+        <div class="bottom-row">
+            <!-- Achievements -->
+            <div class="bottom-card">
+                <div class="bottom-card-title">🏅 Achievements</div>
+                <div class="ach-grid" id="achGrid">
+                    <div class="ach-item locked" id="ach-first"><div class="ach-icon">🐱</div><div class="ach-name">First Run</div></div>
+                    <div class="ach-item locked" id="ach-50"><div class="ach-icon">⭐</div><div class="ach-name">Score 50</div></div>
+                    <div class="ach-item locked" id="ach-100"><div class="ach-icon">🔥</div><div class="ach-name">Score 100</div></div>
+                    <div class="ach-item locked" id="ach-200"><div class="ach-icon">💎</div><div class="ach-name">Score 200</div></div>
+                    <div class="ach-item locked" id="ach-500"><div class="ach-icon">👑</div><div class="ach-name">Score 500</div></div>
+                    <div class="ach-item locked" id="ach-coin10"><div class="ach-icon">🪙</div><div class="ach-name">10 Coins</div></div>
+                    <div class="ach-item locked" id="ach-coin50"><div class="ach-icon">💰</div><div class="ach-name">50 Coins</div></div>
+                    <div class="ach-item locked" id="ach-double"><div class="ach-icon">🦘</div><div class="ach-name">Double Jump</div></div>
+                    <div class="ach-item locked" id="ach-play10"><div class="ach-icon">🎮</div><div class="ach-name">Play 10x</div></div>
+                    <div class="ach-item locked" id="ach-share"><div class="ach-icon">📢</div><div class="ach-name">Share</div></div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Leaderboard -->
-        <div class="leaderboard">
-            <div class="leaderboard-header">
-                <div class="leaderboard-title">🏆 Leaderboard</div>
-                <button class="clear-btn" onclick="clearLeaderboard()">Clear</button>
+            
+            <!-- Leaderboard -->
+            <div class="bottom-card">
+                <div class="bottom-card-title">
+                    🏆 Leaderboard
+                    <button class="clear-btn" onclick="clearLeaderboard()" style="margin-left:auto;">Clear</button>
+                </div>
+                <ul class="lb-list" id="lbList">
+                    <li class="lb-empty">No scores yet</li>
+                </ul>
             </div>
-            <ul class="leaderboard-list" id="leaderboardList">
-                <li class="leaderboard-empty">No scores yet. Be the first!</li>
-            </ul>
         </div>
         
         <!-- Footer -->
@@ -1051,162 +836,45 @@ rlay -->
     <script>
 
 
-        // ===== ACHIEVEMENTS =====
-        let gamesPlayed = 0;
-        let totalCoins = 0;
-        let usedDoubleJump = false;
-        
-        function getAchievements() {
-            return JSON.parse(localStorage.getItem('siggyAchievements') || '{}');
-        }
-        
-        function unlockAchievement(id) {
-            const ach = getAchievements();
-            if (ach[id]) return; // Already unlocked
-            
-            ach[id] = Date.now();
-            localStorage.setItem('siggyAchievements', JSON.stringify(ach));
-            
-            const el = document.getElementById(id);
-            if (el) {
-                el.classList.remove('locked');
-                el.classList.add('unlocked');
-                showToast('🏅', 'Achievement Unlocked: ' + el.querySelector('.achievement-name').textContent);
-            }
-        }
-        
-        function checkAchievements(scoreVal, coinsVal) {
-            if (scoreVal >= 1) unlockAchievement('ach-first-run');
-            if (scoreVal >= 50) unlockAchievement('ach-score-50');
-            if (scoreVal >= 100) unlockAchievement('ach-score-100');
-            if (scoreVal >= 200) unlockAchievement('ach-score-200');
-            if (scoreVal >= 500) unlockAchievement('ach-score-500');
-            if (coinsVal >= 10) unlockAchievement('ach-coins-10');
-            if (coinsVal >= 50) unlockAchievement('ach-coins-50');
-            if (usedDoubleJump) unlockAchievement('ach-double-jump');
-            if (gamesPlayed >= 10) unlockAchievement('ach-play-10');
-        }
-        
-        function renderAchievements() {
-            const ach = getAchievements();
-            Object.keys(ach).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.classList.remove('locked');
-                    el.classList.add('unlocked');
-                }
-            });
-        }
-        
-        // ===== SHARE =====
-        function shareScore() {
-            const text = '🐱 I just scored ' + score + ' points in Siggy Runner on Ritual Faucet! 🎮\n\nCan you beat my score? Play now! 🚀';
-            const url = 'https://ritual-faucet.vercel.app/';
-            const twitterUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url);
-            window.open(twitterUrl, '_blank');
-            unlockAchievement('ach-share');
-        }
-        
-        // ===== LEADERBOARD =====
-        function getLeaderboard() {
-            return JSON.parse(localStorage.getItem('siggyLeaderboard') || '[]');
-        }
-        
-        function addToLeaderboard(scoreVal, coinsVal) {
-            const addr = walletAddress || 'Anonymous';
-            const entry = {
-                address: addr,
-                short: addr === 'Anonymous' ? 'Anonymous' : addr.slice(0, 6) + '...' + addr.slice(-4),
-                score: scoreVal,
-                coins: coinsVal,
-                date: new Date().toLocaleDateString()
-            };
-            let lb = getLeaderboard();
-            lb.push(entry);
-            lb.sort((a, b) => b.score - a.score);
-            lb = lb.slice(0, 10);
-            localStorage.setItem('siggyLeaderboard', JSON.stringify(lb));
-            renderLeaderboard();
-        renderAchievements();
-        }
-        
-        function renderLeaderboard() {
-            const lb = getLeaderboard();
-            const list = document.getElementById('leaderboardList');
-            if (lb.length === 0) {
-                list.innerHTML = '<li class="leaderboard-empty">No scores yet. Be the first!</li>';
-                return;
-            }
-            list.innerHTML = lb.map((entry, i) => {
-                const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
-                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
-                return '<li class="leaderboard-item"><div class="leaderboard-rank ' + rankClass + '">' + medal + '</div><div class="leaderboard-info"><div class="leaderboard-address">' + entry.short + '</div><div class="leaderboard-date">' + entry.date + '</div></div><div class="leaderboard-score">' + entry.score + '</div></li>';
-            }).join('');
-        }
-        
-        function clearLeaderboard() {
-            if (confirm('Clear all scores?')) {
-                localStorage.removeItem('siggyLeaderboard');
-                renderLeaderboard();
-        renderAchievements();
-            }
-        }
-        
-        // ===== SOUND EFFECTS =====
+        // ===== SOUND =====
         let soundEnabled = true;
         let audioCtx = null;
         
         function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
         
         function playSound(type) {
             if (!soundEnabled || !audioCtx) return;
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
             if (type === 'jump') {
-                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-                osc.start(audioCtx.currentTime);
-                osc.stop(audioCtx.currentTime + 0.15);
+                o.frequency.setValueAtTime(300, audioCtx.currentTime);
+                o.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                g.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                o.start(); o.stop(audioCtx.currentTime + 0.15);
             } else if (type === 'coin') {
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                osc.start(audioCtx.currentTime);
-                osc.stop(audioCtx.currentTime + 0.2);
+                o.frequency.setValueAtTime(800, audioCtx.currentTime);
+                o.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                o.start(); o.stop(audioCtx.currentTime + 0.2);
             } else if (type === 'hit') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(audioCtx.currentTime);
-                osc.stop(audioCtx.currentTime + 0.3);
+                o.type = 'sawtooth';
+                o.frequency.setValueAtTime(200, audioCtx.currentTime);
+                o.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                g.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                o.start(); o.stop(audioCtx.currentTime + 0.3);
             } else if (type === 'claim') {
-                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.15);
-                osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                osc.start(audioCtx.currentTime);
-                osc.stop(audioCtx.currentTime + 0.4);
+                o.frequency.setValueAtTime(500, audioCtx.currentTime);
+                o.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.3);
+                g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                o.start(); o.stop(audioCtx.currentTime + 0.4);
             }
-        }
-        
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const btn = document.getElementById('soundToggle');
-            btn.textContent = soundEnabled ? '🔊' : '🔇';
-            btn.classList.toggle('muted', !soundEnabled);
         }
         
         // ===== WALLET =====
@@ -1235,7 +903,7 @@ rlay -->
             try {
                 showToast('🔗', 'Connecting...');
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (!accounts || accounts.length === 0) { showToast('❌', 'No accounts'); return; }
+                if (!accounts || accounts.length === 0) return;
                 
                 provider = new ethers.BrowserProvider(window.ethereum);
                 signer = await provider.getSigner();
@@ -1246,7 +914,6 @@ rlay -->
                 document.getElementById('connectBtn').classList.add('connected');
                 document.getElementById('walletInput').value = walletAddress;
                 showToast('✅', 'Connected: ' + short);
-                await switchToRitual();
             } catch (err) {
                 console.error(err);
                 if (err.code === 4001) showToast('❌', 'Connection rejected');
@@ -1254,24 +921,82 @@ rlay -->
             }
         }
         
-        async function switchToRitual() {
-            const chainId = '0x7b7';
-            try {
-                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] });
-                showToast('🔗', 'Switched to Ritual Testnet');
-            } catch (e) {
-                if (e.code === 4902) {
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_addEthereumChain',
-                            params: [{ chainId, chainName: 'Ritual Testnet', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://rpc.test.ritual.community'], blockExplorerUrls: ['https://explorer.test.ritual.community'] }]
-                        });
-                        showToast('✅', 'Ritual Testnet added!');
-                    } catch (addErr) { showToast('⚠️', 'Add Ritual Testnet manually'); }
-                }
-            }
+        // ===== ACHIEVEMENTS =====
+        let gamesPlayed = 0;
+        let totalCoins = 0;
+        let usedDoubleJump = false;
+        
+        function getUnlocked() {
+            return JSON.parse(localStorage.getItem('siggyAch') || '[]');
         }
-
+        
+        function unlock(id) {
+            const list = getUnlocked();
+            if (list.includes(id)) return;
+            list.push(id);
+            localStorage.setItem('siggyAch', JSON.stringify(list));
+            const el = document.getElementById(id);
+            if (el) { el.classList.remove('locked'); el.classList.add('unlocked'); }
+        }
+        
+        function checkAch(sc, co) {
+            if (sc >= 1) unlock('ach-first');
+            if (sc >= 50) unlock('ach-50');
+            if (sc >= 100) unlock('ach-100');
+            if (sc >= 200) unlock('ach-200');
+            if (sc >= 500) unlock('ach-500');
+            if (co >= 10) unlock('ach-coin10');
+            if (co >= 50) unlock('ach-coin50');
+            if (usedDoubleJump) unlock('ach-double');
+            if (gamesPlayed >= 10) unlock('ach-play10');
+        }
+        
+        function renderAch() {
+            getUnlocked().forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.classList.remove('locked'); el.classList.add('unlocked'); }
+            });
+        }
+        
+        // ===== SHARE =====
+        function shareScore() {
+            const t = '🐱 I scored ' + score + ' in Siggy Runner on Ritual Faucet! Can you beat me? 🚀';
+            window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(t), '_blank');
+            unlock('ach-share');
+        }
+        
+        // ===== LEADERBOARD =====
+        function getLB() { return JSON.parse(localStorage.getItem('siggyLB') || '[]'); }
+        
+        function addLB(sc, co) {
+            const addr = walletAddress || 'Anonymous';
+            const entry = {
+                short: addr === 'Anonymous' ? 'Anonymous' : addr.slice(0, 6) + '...' + addr.slice(-4),
+                score: sc, date: new Date().toLocaleDateString()
+            };
+            let lb = getLB();
+            lb.push(entry);
+            lb.sort((a, b) => b.score - a.score);
+            lb = lb.slice(0, 10);
+            localStorage.setItem('siggyLB', JSON.stringify(lb));
+            renderLB();
+        }
+        
+        function renderLB() {
+            const lb = getLB();
+            const list = document.getElementById('lbList');
+            if (lb.length === 0) { list.innerHTML = '<li class="lb-empty">No scores yet</li>'; return; }
+            list.innerHTML = lb.map((e, i) => {
+                const rc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                const m = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1);
+                return '<li class="lb-item"><div class="lb-rank ' + rc + '">' + m + '</div><div class="lb-addr">' + e.short + '</div><div class="lb-score">' + e.score + '</div></li>';
+            }).join('');
+        }
+        
+        function clearLeaderboard() {
+            if (confirm('Clear all scores?')) { localStorage.removeItem('siggyLB'); renderLB(); }
+        }
+        
         // ===== CONFIG =====
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -1626,8 +1351,8 @@ rlay -->
                     coinItems.splice(i, 1);
                     coins++;
                     totalCoins++;
-                    playSound('coin');
                     score += 5;
+                    playSound('coin');
                     document.getElementById('coins').textContent = coins;
                     updateScore();
                 }
@@ -1656,8 +1381,8 @@ rlay -->
         
         // ===== CONTROLS =====
         function startGame() {
-            initAudio();
             gameState = 'playing';
+            initAudio();
             score = 0; coins = 0; gameSpeed = 5;
             siggy.y = groundY; siggy.velocityY = 0;
             obstacles = []; coinItems = []; particles = [];
@@ -1676,9 +1401,9 @@ rlay -->
         function gameOver() {
             gameState = 'over';
             playSound('hit');
-            if (score > 0) addToLeaderboard(score, coins);
             gamesPlayed++;
-            checkAchievements(score, coins);
+            if (score > 0) addLB(score, coins);
+            checkAch(score, coins);
             if (score > bestScore) {
                 bestScore = score;
                 localStorage.setItem('siggyBest', bestScore);
@@ -1731,9 +1456,9 @@ rlay -->
             if (!addr.startsWith('0x') || addr.length !== 42) { showToast('❌', 'Invalid address'); return; }
             if (reward <= 0) { showToast('❌', 'No reward. Score 100+ to earn!'); return; }
             if (!walletAddress) { showToast('❌', 'Connect wallet first!'); return; }
+            playSound('claim');
             
             showToast('🔗', 'Claiming...');
-            playSound('claim');
             setTimeout(() => {
                 document.getElementById('modalAmount').textContent = reward + ' RITUAL';
                 document.getElementById('modalAddress').textContent = addr.slice(0, 6) + '...' + addr.slice(-4);
@@ -1777,8 +1502,8 @@ rlay -->
         for (let i = 0; i < 4; i++) spawnCloud();
         drawBackground();
         drawSiggy();
-        renderLeaderboard();
-        renderAchievements();
+        renderLB();
+        renderAch();
     </script>
 </body>
 </html>
