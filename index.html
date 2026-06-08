@@ -404,6 +404,8 @@
         }
         
         .claim-section.hidden { display: none; }
+        .claim-section { animation: fadeIn 0.3s ease; border: 2px solid var(--accent-green); box-shadow: 0 0 20px rgba(16,185,129,0.3); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
         .claim-title {
             font-size: 16px;
@@ -659,70 +661,11 @@
         <!-- Wallet Connect -->
         <div class="wallet-bar">
             <button class="wallet-btn" id="connectBtn" onclick="connectWallet()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#f6851b"/><path d="M17.2 5.8L13.1 7.7l-.8-1.8L17.2 5.8zM6.8 5.8l4.1 1.9.8-1.8L6.8 5.8z" fill="#e2761b"/></svg>
-                <span id="connectText">Connect Wallet</span>
-            </button>
-        </div>
-        
-        <!-- Game -->
-        <div class="game-wrapper">
-            <div class="game-header">
-                <div class="game-title">🐱 Siggy Runner</div>
-                <div class="game-stats">
-                    <div class="stat">
-                        <div class="stat-label">Score</div>
-                        <div class="stat-value" id="score">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Best</div>
-                        <div class="stat-value" id="bestScore">0</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-label">Coins</div>
-                        <div class="stat-value" id="coins">0</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="canvas-container">
-                <canvas id="gameCanvas" width="800" height="350"></canvas>
-                
-                <!-- Start Overlay -->
-                <div class="overlay" id="startOverlay">
-                    <div class="overlay-content">
-                        <img src="siggy.jpeg" alt="Siggy" class="overlay-mascot">
-                        <div class="overlay-title">🐱 Siggy Runner</div>
-                        <div class="overlay-subtitle">Help Siggy run and collect coins!</div>
-                        <button class="btn btn-primary" onclick="startGame()">▶ Start Running</button>
-                    </div>
-                </div>
-                
-                <!-- Game Over Overlay -->
-                <div class="overlay hidden" id="gameOverOverlay">
-                    <div class="overlay-content">
-                        <div class="overlay-title">💥 Game Over!</div>
-                        <div class="overlay-subtitle">Siggy tripped!</div>
-                        <div class="overlay-score" id="finalScore">0</div>
-                        <div class="overlay-reward">Reward: <span id="finalReward">0 RITUAL</span></div>
-                        <button class="btn btn-primary" onclick="restartGame()">🔄 Try Again</button>
-                        <button class="btn btn-secondary" onclick="showClaimSection()">🎁 Claim</button>
-                        <button class="share-btn" onclick="shareScore()">🐦 Tweet</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="controls-info">
-                Press <kbd>SPACE</kbd> or <kbd>TAP</kbd> to jump • Double tap for double jump!
-            </div>
-            
-            <div class="mobile-controls">
-                <div class="mobile-btn" ontouchstart="jump()" onclick="jump()">🦘</div>
-            </div>
-        </div>
-        
-        <!-- Claim Section -->
-        <div class="claim-section hidden" id="claimSection">
-            <div class="claim-title">🎁 Claim Your Tokens</div>
+                <svg width="20" height="20" vie
+
+... [OUTPUT TRUNCATED - 3169 chars omitted out of 53169 total] ...
+
+</div>
             <div class="claim-info">
                 <div class="claim-info-item">
                     <div class="claim-info-label">Score</div>
