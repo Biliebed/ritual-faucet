@@ -585,6 +585,271 @@
         }
         
         .clear-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+        /* Enhanced Animations */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 20px 10px rgba(16, 185, 129, 0.1); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.8)); }
+        }
+        
+        .game-wrapper {
+            animation: floatUp 0.6s ease-out;
+        }
+        
+        .wallet-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .wallet-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary {
+            animation: pulse 2s infinite;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        .leaderboard-item {
+            transition: all 0.3s ease;
+        }
+        
+        .leaderboard-item:hover {
+            transform: translateX(8px);
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid var(--accent-green);
+        }
+        
+        .stat {
+            transition: all 0.3s ease;
+        }
+        
+        .stat:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-green);
+        }
+        
+        .stat-value {
+            transition: all 0.2s ease;
+        }
+        
+        .stat-value.bump {
+            animation: bounce 0.3s ease;
+        }
+        
+        .header h1 {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light), #00ff88, var(--accent-green));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 4s ease infinite;
+        }
+        
+        .mascot-row {
+            transition: all 0.3s ease;
+        }
+        
+        .mascot-row:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .controls-info {
+            transition: all 0.3s ease;
+        }
+        
+        .controls-info:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+        
+        .footer {
+            transition: all 0.3s ease;
+        }
+        
+        .footer a:hover {
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        
+        /* Game Over Explosion */
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        
+        .game-over-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: explode 0.6s ease-out forwards;
+        }
+        
+        /* Score Counter Animation */
+        @keyframes countUp {
+            0% { transform: translateY(10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        .score-animate {
+            animation: countUp 0.3s ease;
+        }
+        
+        /* Achievements */
+        .achievements-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .achievements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .achievements-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        
+        .achievement {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        
+        .achievement.unlocked {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.08);
+        }
+        
+        .achievement.locked {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        
+        .achievement:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .achievement.unlocked:hover {
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+        
+        .achievement-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .achievement-name {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .achievement-desc {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .achievement.unlocked .achievement-icon {
+            animation: glow 2s ease infinite;
+        }
+        
+        /* Share Button */
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #1da1f2;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .share-btn:hover {
+            background: #0d8bd9;
+            transform: scale(1.05);
+        }
+        
+        .share-btn svg {
+            width: 16px;
+            height: 16px;
+        }
         
         @media (max-width: 600px) {
             .header h1 { font-size: 1.6rem; }
@@ -636,7 +901,9 @@
                     <div class="stat">
                         <div class="stat-label">
 
-... [OUTPUT TRUNCATED - 1089 chars omitted out of 51089 total] ...
+... [OUTPUT TRUNCATED - 61 chars omitted out of 50061 total] ...
+
+al] ...
 
 rlay -->
                 <div class="overlay hidden" id="gameOverOverlay">
@@ -647,6 +914,7 @@ rlay -->
                         <div class="overlay-reward">Reward: <span id="finalReward">0 RITUAL</span></div>
                         <button class="btn btn-primary" onclick="restartGame()">🔄 Try Again</button>
                         <button class="btn btn-secondary" onclick="showClaimSection()">🎁 Claim Tokens</button>
+                        <button class="share-btn" onclick="shareScore()">🐦 Share</button>
                     </div>
                 </div>
             </div>
@@ -684,6 +952,66 @@ rlay -->
         </div>
         
 
+
+        <!-- Achievements -->
+        <div class="achievements-section">
+            <div class="achievements-header">
+                <div class="achievements-title">🏅 Achievements</div>
+            </div>
+            <div class="achievements-grid" id="achievementsGrid">
+                <div class="achievement locked" id="ach-first-run" data-score="1">
+                    <div class="achievement-icon">🐱</div>
+                    <div class="achievement-name">First Run</div>
+                    <div class="achievement-desc">Play your first game</div>
+                </div>
+                <div class="achievement locked" id="ach-score-50" data-score="50">
+                    <div class="achievement-icon">⭐</div>
+                    <div class="achievement-name">Rising Star</div>
+                    <div class="achievement-desc">Score 50 points</div>
+                </div>
+                <div class="achievement locked" id="ach-score-100" data-score="100">
+                    <div class="achievement-icon">🔥</div>
+                    <div class="achievement-name">On Fire</div>
+                    <div class="achievement-desc">Score 100 points</div>
+                </div>
+                <div class="achievement locked" id="ach-score-200" data-score="200">
+                    <div class="achievement-icon">💎</div>
+                    <div class="achievement-name">Diamond</div>
+                    <div class="achievement-desc">Score 200 points</div>
+                </div>
+                <div class="achievement locked" id="ach-score-500" data-score="500">
+                    <div class="achievement-icon">👑</div>
+                    <div class="achievement-name">King Siggy</div>
+                    <div class="achievement-desc">Score 500 points</div>
+                </div>
+                <div class="achievement locked" id="ach-coins-10" data-coins="10">
+                    <div class="achievement-icon">🪙</div>
+                    <div class="achievement-name">Coin Collector</div>
+                    <div class="achievement-desc">Collect 10 coins</div>
+                </div>
+                <div class="achievement locked" id="ach-coins-50" data-coins="50">
+                    <div class="achievement-icon">💰</div>
+                    <div class="achievement-name">Rich Cat</div>
+                    <div class="achievement-desc">Collect 50 coins</div>
+                </div>
+                <div class="achievement locked" id="ach-double-jump" data-special="double-jump">
+                    <div class="achievement-icon">🦘</div>
+                    <div class="achievement-name">Double Trouble</div>
+                    <div class="achievement-desc">Use double jump</div>
+                </div>
+                <div class="achievement locked" id="ach-play-10" data-special="play-10">
+                    <div class="achievement-icon">🎮</div>
+                    <div class="achievement-name">Dedicated</div>
+                    <div class="achievement-desc">Play 10 games</div>
+                </div>
+                <div class="achievement locked" id="ach-share" data-special="share">
+                    <div class="achievement-icon">📢</div>
+                    <div class="achievement-name">Influencer</div>
+                    <div class="achievement-desc">Share your score</div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Leaderboard -->
         <div class="leaderboard">
             <div class="leaderboard-header">
@@ -722,6 +1050,63 @@ rlay -->
 
     <script>
 
+
+        // ===== ACHIEVEMENTS =====
+        let gamesPlayed = 0;
+        let totalCoins = 0;
+        let usedDoubleJump = false;
+        
+        function getAchievements() {
+            return JSON.parse(localStorage.getItem('siggyAchievements') || '{}');
+        }
+        
+        function unlockAchievement(id) {
+            const ach = getAchievements();
+            if (ach[id]) return; // Already unlocked
+            
+            ach[id] = Date.now();
+            localStorage.setItem('siggyAchievements', JSON.stringify(ach));
+            
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('locked');
+                el.classList.add('unlocked');
+                showToast('🏅', 'Achievement Unlocked: ' + el.querySelector('.achievement-name').textContent);
+            }
+        }
+        
+        function checkAchievements(scoreVal, coinsVal) {
+            if (scoreVal >= 1) unlockAchievement('ach-first-run');
+            if (scoreVal >= 50) unlockAchievement('ach-score-50');
+            if (scoreVal >= 100) unlockAchievement('ach-score-100');
+            if (scoreVal >= 200) unlockAchievement('ach-score-200');
+            if (scoreVal >= 500) unlockAchievement('ach-score-500');
+            if (coinsVal >= 10) unlockAchievement('ach-coins-10');
+            if (coinsVal >= 50) unlockAchievement('ach-coins-50');
+            if (usedDoubleJump) unlockAchievement('ach-double-jump');
+            if (gamesPlayed >= 10) unlockAchievement('ach-play-10');
+        }
+        
+        function renderAchievements() {
+            const ach = getAchievements();
+            Object.keys(ach).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove('locked');
+                    el.classList.add('unlocked');
+                }
+            });
+        }
+        
+        // ===== SHARE =====
+        function shareScore() {
+            const text = '🐱 I just scored ' + score + ' points in Siggy Runner on Ritual Faucet! 🎮\n\nCan you beat my score? Play now! 🚀';
+            const url = 'https://ritual-faucet.vercel.app/';
+            const twitterUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url);
+            window.open(twitterUrl, '_blank');
+            unlockAchievement('ach-share');
+        }
+        
         // ===== LEADERBOARD =====
         function getLeaderboard() {
             return JSON.parse(localStorage.getItem('siggyLeaderboard') || '[]');
@@ -742,6 +1127,7 @@ rlay -->
             lb = lb.slice(0, 10);
             localStorage.setItem('siggyLeaderboard', JSON.stringify(lb));
             renderLeaderboard();
+        renderAchievements();
         }
         
         function renderLeaderboard() {
@@ -762,6 +1148,7 @@ rlay -->
             if (confirm('Clear all scores?')) {
                 localStorage.removeItem('siggyLeaderboard');
                 renderLeaderboard();
+        renderAchievements();
             }
         }
         
@@ -1238,6 +1625,7 @@ rlay -->
                     spawnParticles(coin.x + 9, coin.y + 9, '#ffd700');
                     coinItems.splice(i, 1);
                     coins++;
+                    totalCoins++;
                     playSound('coin');
                     score += 5;
                     document.getElementById('coins').textContent = coins;
@@ -1289,6 +1677,8 @@ rlay -->
             gameState = 'over';
             playSound('hit');
             if (score > 0) addToLeaderboard(score, coins);
+            gamesPlayed++;
+            checkAchievements(score, coins);
             if (score > bestScore) {
                 bestScore = score;
                 localStorage.setItem('siggyBest', bestScore);
@@ -1319,6 +1709,7 @@ rlay -->
             } else if (siggy.jumpCount < 2) {
                 siggy.velocityY = -11;
                 siggy.jumpCount = 2;
+                usedDoubleJump = true;
             }
         }
         
@@ -1387,6 +1778,7 @@ rlay -->
         drawBackground();
         drawSiggy();
         renderLeaderboard();
+        renderAchievements();
     </script>
 </body>
 </html>
