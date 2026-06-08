@@ -451,18 +451,16 @@
         
         .footer a { color: var(--accent-green); text-decoration: none; }
 
-        /* Clean Animations */
+        /* Animations */
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        
         @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            50% { box-shadow: 0 0 15px 5px rgba(16, 185, 129, 0.15); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+            50% { box-shadow: 0 0 15px 5px rgba(16,185,129,0.15); }
         }
-        
         .header h1 {
             background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
             background-size: 200% 200%;
@@ -470,218 +468,54 @@
             -webkit-text-fill-color: transparent;
             animation: gradientShift 3s ease infinite;
         }
+        .btn-primary { animation: pulse 2s infinite; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16,185,129,0.4); }
+        .btn { transition: all 0.2s ease; }
         
-        .btn-primary {
-            animation: pulse 2s infinite;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-        }
-        
-        .btn {
-            transition: all 0.2s ease;
-        }
-        
-        /* Wallet Bar */
-        .wallet-bar {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-        
+        /* Wallet */
+        .wallet-bar { display: flex; justify-content: center; margin-bottom: 15px; }
         .wallet-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px; padding: 10px 20px;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+            color: var(--text-primary); font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: all 0.2s;
         }
+        .wallet-btn:hover { border-color: var(--accent-green); }
+        .wallet-btn.connected { border-color: var(--accent-green); background: rgba(16,185,129,0.1); }
+        .wallet-btn svg { width: 20px; height: 20px; }
         
-        .wallet-btn:hover {
-            border-color: var(--accent-green);
-        }
-        
-        .wallet-btn.connected {
-            border-color: var(--accent-green);
-            background: rgba(16, 185, 129, 0.1);
-        }
-        
-        .wallet-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-        
-        /* Bottom Row - Achievements & Leaderboard side by side */
-        .bottom-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
+        /* Bottom Row */
+        .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
         .bottom-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px;
         }
-        
-        .bottom-card-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        /* Achievements Compact */
-        .ach-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-        }
-        
+        .bottom-card-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .ach-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .ach-item {
-            text-align: center;
-            padding: 8px 4px;
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            transition: all 0.2s;
-            cursor: default;
+            text-align: center; padding: 8px 4px; background: var(--bg-secondary);
+            border-radius: 8px; transition: all 0.2s;
         }
-        
-        .ach-item.unlocked {
-            border: 1px solid var(--accent-green);
-            background: rgba(16, 185, 129, 0.08);
-        }
-        
-        .ach-item.locked {
-            opacity: 0.4;
-        }
-        
-        .ach-item:hover {
-            transform: translateY(-2px);
-        }
-        
-        .ach-icon {
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-        
-        .ach-name {
-            font-size: 9px;
-            color: var(--text-secondary);
-            line-height: 1.2;
-        }
-        
-        .ach-item.unlocked .ach-name {
-            color: var(--accent-green);
-        }
-        
-        /* Leaderboard Compact */
-        .lb-list {
-            list-style: none;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        
-        .lb-item {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            background: var(--bg-secondary);
-            border-radius: 6px;
-            margin-bottom: 6px;
-            font-size: 13px;
-        }
-        
-        .lb-rank {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-            margin-right: 10px;
-            background: var(--bg-card);
-        }
-        
+        .ach-item.unlocked { border: 1px solid var(--accent-green); background: rgba(16,185,129,0.08); }
+        .ach-item.locked { opacity: 0.4; }
+        .ach-item:hover { transform: translateY(-2px); }
+        .ach-icon { font-size: 20px; margin-bottom: 4px; }
+        .ach-name { font-size: 9px; color: var(--text-secondary); }
+        .ach-item.unlocked .ach-name { color: var(--accent-green); }
+        .lb-list { list-style: none; max-height: 200px; overflow-y: auto; }
+        .lb-item { display: flex; align-items: center; padding: 8px; background: var(--bg-secondary); border-radius: 6px; margin-bottom: 6px; font-size: 13px; }
+        .lb-rank { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-right: 10px; background: var(--bg-card); }
         .lb-rank.gold { background: #ffd700; color: #000; }
         .lb-rank.silver { background: #c0c0c0; color: #000; }
         .lb-rank.bronze { background: #cd7f32; color: #fff; }
-        
-        .lb-addr {
-            flex: 1;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-        }
-        
-        .lb-score {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            color: var(--accent-green);
-        }
-        
-        .lb-empty {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-        
-        .clear-btn {
-            font-size: 11px;
-            color: var(--text-secondary);
-            background: none;
-            border: 1px solid var(--border);
-            padding: 3px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .clear-btn:hover {
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-        
-        /* Share */
-        .share-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 14px;
-            background: #1da1f2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            cursor: pointer;
-        }
-        
-        .share-btn:hover {
-            background: #0d8bd9;
-        }
-        
-        @media (max-width: 600px) {
-            .bottom-row {
-                grid-template-columns: 1fr;
-            }
-            .ach-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
+        .lb-addr { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+        .lb-score-val { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent-green); }
+        .lb-empty { text-align: center; padding: 20px; color: var(--text-secondary); font-size: 13px; }
+        .clear-btn { font-size: 11px; color: var(--text-secondary); background: none; border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px; cursor: pointer; margin-left: auto; }
+        .clear-btn:hover { border-color: #ef4444; color: #ef4444; }
+        .share-btn { display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px; background: #1da1f2; color: white; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; }
+        .share-btn:hover { background: #0d8bd9; }
+        @media (max-width: 600px) { .bottom-row { grid-template-columns: 1fr; } }
         
         @media (max-width: 600px) {
             .header h1 { font-size: 1.6rem; }
@@ -734,14 +568,11 @@
                         <div class="stat-value" id="bestScore">0</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-label">Coins</div>
-                        <div class="stat-value" id="coins">0</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="canvas-container">
-                <canvas id="gameCanvas" width="800" height="350"></canvas>
+                        <div class="stat-label">C
+
+... [OUTPUT TRUNCATED - 271 chars omitted out of 50271 total] ...
+
+anvas>
                 
                 <!-- Start Overlay -->
                 <div class="overlay" id="startOverlay">
@@ -777,9 +608,31 @@
         </div>
         
 
+        <!-- Claim Section (kept for functionality) -->
+        <div class="claim-section hidden" id="claimSection">
+            <div class="claim-title">🎁 Claim Your Tokens</div>
+            <div class="claim-info">
+                <div class="claim-info-item">
+                    <div class="claim-info-label">Score</div>
+                    <div class="claim-info-value" id="claimScore">0</div>
+                </div>
+                <div class="claim-info-item">
+                    <div class="claim-info-label">Reward</div>
+                    <div class="claim-info-value" id="claimReward">0 RITUAL</div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Wallet Address (EVM)</label>
+                <input type="text" id="walletInput" placeholder="0x..." maxlength="42">
+            </div>
+            <div style="text-align: center;">
+                <button class="btn btn-primary" onclick="claimTokens()">🎁 Claim Now</button>
+                <button class="btn btn-secondary" onclick="resetAll()">🔄 Play Again</button>
+            </div>
+        </div>
+        
         <!-- Bottom Row -->
         <div class="bottom-row">
-            <!-- Achievements -->
             <div class="bottom-card">
                 <div class="bottom-card-title">🏅 Achievements</div>
                 <div class="ach-grid" id="achGrid">
@@ -795,12 +648,10 @@
                     <div class="ach-item locked" id="ach-share"><div class="ach-icon">📢</div><div class="ach-name">Share</div></div>
                 </div>
             </div>
-            
-            <!-- Leaderboard -->
             <div class="bottom-card">
                 <div class="bottom-card-title">
                     🏆 Leaderboard
-                    <button class="clear-btn" onclick="clearLeaderboard()" style="margin-left:auto;">Clear</button>
+                    <button class="clear-btn" onclick="clearLeaderboard()">Clear</button>
                 </div>
                 <ul class="lb-list" id="lbList">
                     <li class="lb-empty">No scores yet</li>
@@ -835,48 +686,6 @@
 
     <script>
 
-
-        // ===== SOUND =====
-        let soundEnabled = true;
-        let audioCtx = null;
-        
-        function initAudio() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        
-        function playSound(type) {
-            if (!soundEnabled || !audioCtx) return;
-            const o = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            o.connect(g); g.connect(audioCtx.destination);
-            if (type === 'jump') {
-                o.frequency.setValueAtTime(300, audioCtx.currentTime);
-                o.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
-                g.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-                o.start(); o.stop(audioCtx.currentTime + 0.15);
-            } else if (type === 'coin') {
-                o.frequency.setValueAtTime(800, audioCtx.currentTime);
-                o.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-                g.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                o.start(); o.stop(audioCtx.currentTime + 0.2);
-            } else if (type === 'hit') {
-                o.type = 'sawtooth';
-                o.frequency.setValueAtTime(200, audioCtx.currentTime);
-                o.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
-                g.gain.setValueAtTime(0.4, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                o.start(); o.stop(audioCtx.currentTime + 0.3);
-            } else if (type === 'claim') {
-                o.frequency.setValueAtTime(500, audioCtx.currentTime);
-                o.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.3);
-                g.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                o.start(); o.stop(audioCtx.currentTime + 0.4);
-            }
-        }
-        
         // ===== WALLET =====
         let walletAddress = '';
         let provider = null;
@@ -889,113 +698,58 @@
                 signer = null;
                 document.getElementById('connectBtn').classList.remove('connected');
                 document.getElementById('connectText').textContent = 'Connect Wallet';
-                document.getElementById('walletInput').value = '';
                 showToast('🔌', 'Wallet disconnected');
                 return;
             }
-            
             if (typeof window.ethereum === 'undefined') {
                 showToast('❌', 'Install MetaMask!');
                 setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1000);
                 return;
             }
-            
             try {
                 showToast('🔗', 'Connecting...');
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 if (!accounts || accounts.length === 0) return;
-                
                 provider = new ethers.BrowserProvider(window.ethereum);
                 signer = await provider.getSigner();
                 walletAddress = accounts[0];
-                
                 const short = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
                 document.getElementById('connectText').textContent = short;
                 document.getElementById('connectBtn').classList.add('connected');
-                document.getElementById('walletInput').value = walletAddress;
                 showToast('✅', 'Connected: ' + short);
             } catch (err) {
                 console.error(err);
-                if (err.code === 4001) showToast('❌', 'Connection rejected');
-                else showToast('❌', err.message || 'Connection failed');
+                if (err.code === 4001) showToast('❌', 'Rejected');
+                else showToast('❌', err.message || 'Failed');
             }
         }
         
+        // ===== SOUND =====
+        let soundEnabled = true;
+        let audioCtx = null;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        function playSound(t) {
+            if (!soundEnabled || !audioCtx) return;
+            const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            if (t === 'jump') { o.frequency.setValueAtTime(300, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime+0.1); g.gain.setValueAtTime(0.3, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.15); o.start(); o.stop(audioCtx.currentTime+0.15); }
+            else if (t === 'coin') { o.frequency.setValueAtTime(800, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime+0.1); g.gain.setValueAtTime(0.2, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.2); o.start(); o.stop(audioCtx.currentTime+0.2); }
+            else if (t === 'hit') { o.type='sawtooth'; o.frequency.setValueAtTime(200, audioCtx.currentTime); o.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime+0.3); g.gain.setValueAtTime(0.4, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime+0.3); o.start(); o.stop(audioCtx.currentTime+0.3); }
+        }
+        
         // ===== ACHIEVEMENTS =====
-        let gamesPlayed = 0;
-        let totalCoins = 0;
-        let usedDoubleJump = false;
-        
-        function getUnlocked() {
-            return JSON.parse(localStorage.getItem('siggyAch') || '[]');
-        }
-        
-        function unlock(id) {
-            const list = getUnlocked();
-            if (list.includes(id)) return;
-            list.push(id);
-            localStorage.setItem('siggyAch', JSON.stringify(list));
-            const el = document.getElementById(id);
-            if (el) { el.classList.remove('locked'); el.classList.add('unlocked'); }
-        }
-        
-        function checkAch(sc, co) {
-            if (sc >= 1) unlock('ach-first');
-            if (sc >= 50) unlock('ach-50');
-            if (sc >= 100) unlock('ach-100');
-            if (sc >= 200) unlock('ach-200');
-            if (sc >= 500) unlock('ach-500');
-            if (co >= 10) unlock('ach-coin10');
-            if (co >= 50) unlock('ach-coin50');
-            if (usedDoubleJump) unlock('ach-double');
-            if (gamesPlayed >= 10) unlock('ach-play10');
-        }
-        
-        function renderAch() {
-            getUnlocked().forEach(id => {
-                const el = document.getElementById(id);
-                if (el) { el.classList.remove('locked'); el.classList.add('unlocked'); }
-            });
-        }
-        
-        // ===== SHARE =====
-        function shareScore() {
-            const t = '🐱 I scored ' + score + ' in Siggy Runner on Ritual Faucet! Can you beat me? 🚀';
-            window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(t), '_blank');
-            unlock('ach-share');
-        }
+        let gamesPlayed = 0, totalCoins = 0, usedDoubleJump = false;
+        function getAch() { return JSON.parse(localStorage.getItem('siggyAch') || '[]'); }
+        function unlockAch(id) { const l=getAch(); if(l.includes(id))return; l.push(id); localStorage.setItem('siggyAch',JSON.stringify(l)); const e=document.getElementById(id); if(e){e.classList.remove('locked');e.classList.add('unlocked');} }
+        function checkAch(sc,co) { if(sc>=1)unlockAch('ach-first'); if(sc>=50)unlockAch('ach-50'); if(sc>=100)unlockAch('ach-100'); if(sc>=200)unlockAch('ach-200'); if(sc>=500)unlockAch('ach-500'); if(co>=10)unlockAch('ach-coin10'); if(co>=50)unlockAch('ach-coin50'); if(usedDoubleJump)unlockAch('ach-double'); if(gamesPlayed>=10)unlockAch('ach-play10'); }
+        function renderAch() { getAch().forEach(id=>{const e=document.getElementById(id);if(e){e.classList.remove('locked');e.classList.add('unlocked');}}); }
+        function shareScore() { window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('🐱 I scored '+score+' in Siggy Runner on Ritual Faucet! 🚀'),'_blank'); unlockAch('ach-share'); }
         
         // ===== LEADERBOARD =====
-        function getLB() { return JSON.parse(localStorage.getItem('siggyLB') || '[]'); }
-        
-        function addLB(sc, co) {
-            const addr = walletAddress || 'Anonymous';
-            const entry = {
-                short: addr === 'Anonymous' ? 'Anonymous' : addr.slice(0, 6) + '...' + addr.slice(-4),
-                score: sc, date: new Date().toLocaleDateString()
-            };
-            let lb = getLB();
-            lb.push(entry);
-            lb.sort((a, b) => b.score - a.score);
-            lb = lb.slice(0, 10);
-            localStorage.setItem('siggyLB', JSON.stringify(lb));
-            renderLB();
-        }
-        
-        function renderLB() {
-            const lb = getLB();
-            const list = document.getElementById('lbList');
-            if (lb.length === 0) { list.innerHTML = '<li class="lb-empty">No scores yet</li>'; return; }
-            list.innerHTML = lb.map((e, i) => {
-                const rc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
-                const m = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1);
-                return '<li class="lb-item"><div class="lb-rank ' + rc + '">' + m + '</div><div class="lb-addr">' + e.short + '</div><div class="lb-score">' + e.score + '</div></li>';
-            }).join('');
-        }
-        
-        function clearLeaderboard() {
-            if (confirm('Clear all scores?')) { localStorage.removeItem('siggyLB'); renderLB(); }
-        }
+        function getLB() { return JSON.parse(localStorage.getItem('siggyLB')||'[]'); }
+        function addLB(sc) { const a=walletAddress||'Anonymous'; const e={short:a==='Anonymous'?'Anon':a.slice(0,6)+'...'+a.slice(-4),score:sc,date:new Date().toLocaleDateString()}; let lb=getLB(); lb.push(e); lb.sort((a,b)=>b.score-a.score); lb=lb.slice(0,10); localStorage.setItem('siggyLB',JSON.stringify(lb)); renderLB(); }
+        function renderLB() { const lb=getLB(); const l=document.getElementById('lbList'); if(!l)return; if(lb.length===0){l.innerHTML='<li class="lb-empty">No scores yet</li>';return;} l.innerHTML=lb.map((e,i)=>{const rc=i===0?'gold':i===1?'silver':i===2?'bronze':'';const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);return '<li class="lb-item"><div class="lb-rank '+rc+'">'+m+'</div><div class="lb-addr">'+e.short+'</div><div class="lb-score-val">'+e.score+'</div></li>';}).join(''); }
+        function clearLeaderboard() { if(confirm('Clear all?')){localStorage.removeItem('siggyLB');renderLB();} }
         
         // ===== CONFIG =====
         const canvas = document.getElementById('gameCanvas');
@@ -1381,8 +1135,8 @@
         
         // ===== CONTROLS =====
         function startGame() {
-            gameState = 'playing';
             initAudio();
+            gameState = 'playing';
             score = 0; coins = 0; gameSpeed = 5;
             siggy.y = groundY; siggy.velocityY = 0;
             obstacles = []; coinItems = []; particles = [];
@@ -1402,7 +1156,7 @@
             gameState = 'over';
             playSound('hit');
             gamesPlayed++;
-            if (score > 0) addLB(score, coins);
+            if (score > 0) addLB(score);
             checkAch(score, coins);
             if (score > bestScore) {
                 bestScore = score;
@@ -1456,7 +1210,6 @@
             if (!addr.startsWith('0x') || addr.length !== 42) { showToast('❌', 'Invalid address'); return; }
             if (reward <= 0) { showToast('❌', 'No reward. Score 100+ to earn!'); return; }
             if (!walletAddress) { showToast('❌', 'Connect wallet first!'); return; }
-            playSound('claim');
             
             showToast('🔗', 'Claiming...');
             setTimeout(() => {
