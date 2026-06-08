@@ -485,6 +485,35 @@
             background: rgba(16, 185, 129, 0.1);
         }
         
+
+        /* Sound Toggle */
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        
+        .sound-toggle:hover {
+            border-color: var(--accent-green);
+            transform: scale(1.1);
+        }
+        
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+        
         .wallet-btn svg {
             width: 24px;
             height: 24px;
@@ -501,6 +530,7 @@
     </style>
 </head>
 <body>
+    <div class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</div>
     <div class="bg-grid"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
@@ -632,6 +662,70 @@
 
     <script>
 
+
+        // ===== SOUND EFFECTS =====
+        let soundEnabled = true;
+        let audioCtx = null;
+        
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        
+        function playSound(type) {
+            if (!soundEnabled || !audioCtx) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            switch(type) {
+                case 'jump':
+                    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.15);
+                    break;
+                case 'coin':
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.2);
+                    break;
+                case 'hit':
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.3);
+                    break;
+                case 'claim':
+                    osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.15);
+                    osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start(audioCtx.currentTime);
+                    osc.stop(audioCtx.currentTime + 0.4);
+                    break;
+            }
+        }
+        
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            btn.textContent = soundEnabled ? '🔊' : '🔇';
+            btn.classList.toggle('muted', !soundEnabled);
+        }
+        
         // Wallet
         let walletAddress = '';
         let provider = null;
@@ -1051,6 +1145,7 @@
                     spawnParticles(coin.x + 9, coin.y + 9, '#ffd700');
                     coinItems.splice(i, 1);
                     coins++;
+                    playSound('coin');
                     score += 5;
                     document.getElementById('coins').textContent = coins;
                     updateScore();
@@ -1080,6 +1175,7 @@
         
         // ===== CONTROLS =====
         function startGame() {
+            initAudio();
             gameState = 'playing';
             score = 0; coins = 0; gameSpeed = 5;
             siggy.y = groundY; siggy.velocityY = 0;
@@ -1098,6 +1194,7 @@
         
         function gameOver() {
             gameState = 'over';
+            playSound('hit');
             if (score > bestScore) {
                 bestScore = score;
                 localStorage.setItem('siggyBest', bestScore);
@@ -1124,6 +1221,7 @@
                 siggy.velocityY = -13;
                 siggy.isJumping = true;
                 siggy.jumpCount = 1;
+                playSound('jump');
             } else if (siggy.jumpCount < 2) {
                 siggy.velocityY = -11;
                 siggy.jumpCount = 2;
@@ -1150,6 +1248,7 @@
             if (!walletAddress) { showToast('❌', 'Connect wallet first!'); return; }
             
             showToast('🔗', 'Claiming...');
+            playSound('claim');
             setTimeout(() => {
                 document.getElementById('modalAmount').textContent = reward + ' RITUAL';
                 document.getElementById('modalAddress').textContent = addr.slice(0, 6) + '...' + addr.slice(-4);
