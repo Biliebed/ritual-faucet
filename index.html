@@ -6,6 +6,7 @@
     <title>Ritual Faucet - Play Siggy Runner</title>
     <meta name="theme-color" content="#10b981">
     <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.ethers.io/6/ethers.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -449,6 +450,45 @@
         }
         
         .footer a { color: var(--accent-green); text-decoration: none; }
+
+        /* Wallet Connect */
+        .wallet-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .wallet-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .wallet-btn:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
+        }
+        
+        .wallet-btn.connected {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .wallet-btn svg {
+            width: 24px;
+            height: 24px;
+        }
         
         @media (max-width: 600px) {
             .header h1 { font-size: 1.6rem; }
@@ -477,6 +517,14 @@
                 <img src="siggy.jpeg" alt="Siggy" class="mascot-img">
                 <span class="mascot-text">🐱 Siggy says: Run & earn! 🏃</span>
             </div>
+        </div>
+        
+        <!-- Wallet Connect -->
+        <div class="wallet-bar" id="walletBar">
+            <button class="wallet-btn" id="connectBtn" onclick="connectWallet()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#f6851b"/><path d="M17.2 5.8L13.1 7.7l-.8-1.8L17.2 5.8zM6.8 5.8l4.1 1.9.8-1.8L6.8 5.8z" fill="#e2761b" stroke="#e2761b" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span id="connectText">Connect Wallet</span>
+            </button>
         </div>
         
         <!-- Game -->
@@ -549,7 +597,7 @@
             </div>
             <div class="input-group">
                 <label>Wallet Address (EVM)</label>
-                <input type="text" id="walletInput" placeholder="0x..." maxlength="42">
+                <input type="text" id="walletInput" placeholder="0x..." maxlength="42" readonly>
             </div>
             <div style="text-align: center;">
                 <button class="btn btn-primary" onclick="claimTokens()">🎁 Claim Now</button>
@@ -583,6 +631,73 @@
     </div>
 
     <script>
+
+        // Wallet
+        let walletAddress = '';
+        let provider = null;
+        let signer = null;
+        
+        // ===== WALLET CONNECT =====
+        async function connectWallet() {
+            if (walletAddress) {
+                walletAddress = '';
+                provider = null;
+                signer = null;
+                document.getElementById('connectBtn').classList.remove('connected');
+                document.getElementById('connectText').textContent = 'Connect Wallet';
+                document.getElementById('walletInput').value = '';
+                showToast('🔌', 'Wallet disconnected');
+                return;
+            }
+            
+            if (typeof window.ethereum === 'undefined') {
+                showToast('❌', 'Install MetaMask first!');
+                window.open('https://metamask.io/', '_blank');
+                return;
+            }
+            
+            try {
+                showToast('🔗', 'Connecting...');
+                provider = new ethers.BrowserProvider(window.ethereum);
+                signer = await provider.getSigner();
+                walletAddress = await signer.getAddress();
+                
+                const short = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+                document.getElementById('connectText').textContent = short;
+                document.getElementById('connectBtn').classList.add('connected');
+                document.getElementById('walletInput').value = walletAddress;
+                
+                showToast('✅', 'Connected: ' + short);
+                await switchToRitual();
+            } catch (err) {
+                console.error(err);
+                showToast('❌', 'Connection failed');
+            }
+        }
+        
+        async function switchToRitual() {
+            const chainId = '0x7b7';
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId }]
+                });
+            } catch (e) {
+                if (e.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId,
+                            chainName: 'Ritual Testnet',
+                            nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+                            rpcUrls: ['https://rpc.test.ritual.community'],
+                            blockExplorerUrls: ['https://explorer.test.ritual.community']
+                        }]
+                    });
+                }
+            }
+        }
+        
         // ===== CONFIG =====
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -1032,6 +1147,7 @@
             if (!addr) { showToast('❌', 'Enter wallet address'); return; }
             if (!addr.startsWith('0x') || addr.length !== 42) { showToast('❌', 'Invalid address'); return; }
             if (reward <= 0) { showToast('❌', 'No reward. Score 100+ to earn!'); return; }
+            if (!walletAddress) { showToast('❌', 'Connect wallet first!'); return; }
             
             showToast('🔗', 'Claiming...');
             setTimeout(() => {
