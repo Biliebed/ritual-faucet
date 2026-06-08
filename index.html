@@ -485,7 +485,11 @@
             background: rgba(16, 185, 129, 0.1);
         }
         
-
+        .wallet-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        
         /* Sound Toggle */
         .sound-toggle {
             position: fixed;
@@ -510,7 +514,10 @@
             transform: scale(1.1);
         }
         
-
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+        
         /* Leaderboard */
         .leaderboard {
             background: var(--bg-card);
@@ -546,11 +553,6 @@
             background: var(--bg-secondary);
             border-radius: 8px;
             margin-bottom: 8px;
-            transition: all 0.2s;
-        }
-        
-        .leaderboard-item:hover {
-            transform: translateX(5px);
         }
         
         .leaderboard-rank {
@@ -570,59 +572,19 @@
         .leaderboard-rank.bronze { background: linear-gradient(135deg, #cd7f32, #b87333); color: #fff; }
         .leaderboard-rank.normal { background: var(--bg-card); color: var(--text-secondary); }
         
-        .leaderboard-info {
-            flex: 1;
-        }
-        
-        .leaderboard-address {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: var(--text-primary);
-        }
-        
-        .leaderboard-date {
-            font-size: 11px;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-        
-        .leaderboard-score {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--accent-green);
-        }
-        
-        .leaderboard-empty {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-secondary);
-        }
+        .leaderboard-info { flex: 1; }
+        .leaderboard-address { font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+        .leaderboard-date { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+        .leaderboard-score { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: var(--accent-green); }
+        .leaderboard-empty { text-align: center; padding: 30px; color: var(--text-secondary); }
         
         .clear-btn {
-            font-size: 12px;
-            color: var(--text-secondary);
-            background: none;
-            border: 1px solid var(--border);
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
+            font-size: 12px; color: var(--text-secondary); background: none;
+            border: 1px solid var(--border); padding: 4px 10px; border-radius: 6px;
+            cursor: pointer; transition: all 0.2s;
         }
         
-        .clear-btn:hover {
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-        
-        .sound-toggle.muted {
-            opacity: 0.5;
-        }
-        
-        .wallet-btn svg {
-            width: 24px;
-            height: 24px;
-        }
+        .clear-btn:hover { border-color: #ef4444; color: #ef4444; }
         
         @media (max-width: 600px) {
             .header h1 { font-size: 1.6rem; }
@@ -662,11 +624,72 @@
             </button>
         </div>
         
-        <!--
-
-... [OUTPUT TRUNCATED - 1562 chars omitted out of 51562 total] ...
-
-lue" id="claimReward">0 RITUAL</div>
+        <!-- Game -->
+        <div class="game-wrapper">
+            <div class="game-header">
+                <div class="game-title">🐱 Siggy Runner</div>
+                <div class="game-stats">
+                    <div class="stat">
+                        <div class="stat-label">Score</div>
+                        <div class="stat-value" id="score">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Best</div>
+                        <div class="stat-value" id="bestScore">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Coins</div>
+                        <div class="stat-value" id="coins">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="gameCanvas" width="800" height="350"></canvas>
+                
+                <!-- Start Overlay -->
+                <div class="overlay" id="startOverlay">
+                    <div class="overlay-content">
+                        <img src="siggy.jpeg" alt="Siggy" class="overlay-mascot">
+                        <div class="overlay-title">🐱 Siggy Runner</div>
+                        <div class="overlay-subtitle">Help Siggy run and collect coins!</div>
+                        <button class="btn btn-primary" onclick="startGame()">▶ Start Running</button>
+                    </div>
+                </div>
+                
+                <!-- Game Over Overlay -->
+                <div class="overlay hidden" id="gameOverOverlay">
+                    <div class="overlay-content">
+                        <div class="overlay-title">💥 Game Over!</div>
+                        <div class="overlay-subtitle">Siggy tripped!</div>
+                        <div class="overlay-score" id="finalScore">0</div>
+                        <div class="overlay-reward">Reward: <span id="finalReward">0 RITUAL</span></div>
+                        <button class="btn btn-primary" onclick="restartGame()">🔄 Try Again</button>
+                        <button class="btn btn-secondary" onclick="showClaimSection()">🎁 Claim Tokens</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls-info">
+                Press <kbd>SPACE</kbd> or <kbd>TAP</kbd> to jump • Double tap for double jump!
+            </div>
+            
+            <div class="mobile-controls">
+                <div class="mobile-btn" ontouchstart="jump()" onclick="jump()">🦘</div>
+            </div>
+        </div>
+        
+        <!-- Claim Section -->
+        <div class="claim-section hidden" id="claimSection">
+            <div class="claim-title">🎁 Claim Your Tokens</div>
+            <div class="claim-info">
+                <div class="claim-info-item">
+                    <div class="claim-info-label">Score</div>
+                    <div class="claim-info-value" id="claimScore">0</div>
+                </div>
+                <div class="claim-info-item">
+                    <div class="claim-info-label">Reward</div>
+                    <div class="claim-info-value" id="claimReward">0 RITUAL</div>
                 </div>
             </div>
             <div class="input-group">
@@ -718,8 +741,6 @@ lue" id="claimReward">0 RITUAL</div>
 
     <script>
 
-
-
         // ===== LEADERBOARD =====
         function getLeaderboard() {
             return JSON.parse(localStorage.getItem('siggyLeaderboard') || '[]');
@@ -734,11 +755,10 @@ lue" id="claimReward">0 RITUAL</div>
                 coins: coinsVal,
                 date: new Date().toLocaleDateString()
             };
-            
             let lb = getLeaderboard();
             lb.push(entry);
             lb.sort((a, b) => b.score - a.score);
-            lb = lb.slice(0, 10); // Keep top 10
+            lb = lb.slice(0, 10);
             localStorage.setItem('siggyLeaderboard', JSON.stringify(lb));
             renderLeaderboard();
         }
@@ -746,25 +766,14 @@ lue" id="claimReward">0 RITUAL</div>
         function renderLeaderboard() {
             const lb = getLeaderboard();
             const list = document.getElementById('leaderboardList');
-            
             if (lb.length === 0) {
                 list.innerHTML = '<li class="leaderboard-empty">No scores yet. Be the first!</li>';
                 return;
             }
-            
             list.innerHTML = lb.map((entry, i) => {
                 const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
                 const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
-                return `
-                    <li class="leaderboard-item">
-                        <div class="leaderboard-rank ${rankClass}">${medal}</div>
-                        <div class="leaderboard-info">
-                            <div class="leaderboard-address">${entry.short}</div>
-                            <div class="leaderboard-date">${entry.date}</div>
-                        </div>
-                        <div class="leaderboard-score">${entry.score}</div>
-                    </li>
-                `;
+                return '<li class="leaderboard-item"><div class="leaderboard-rank ' + rankClass + '">' + medal + '</div><div class="leaderboard-info"><div class="leaderboard-address">' + entry.short + '</div><div class="leaderboard-date">' + entry.date + '</div></div><div class="leaderboard-score">' + entry.score + '</div></li>';
             }).join('');
         }
         
@@ -787,47 +796,41 @@ lue" id="claimReward">0 RITUAL</div>
         
         function playSound(type) {
             if (!soundEnabled || !audioCtx) return;
-            
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             
-            switch(type) {
-                case 'jump':
-                    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-                    osc.start(audioCtx.currentTime);
-                    osc.stop(audioCtx.currentTime + 0.15);
-                    break;
-                case 'coin':
-                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                    osc.start(audioCtx.currentTime);
-                    osc.stop(audioCtx.currentTime + 0.2);
-                    break;
-                case 'hit':
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
-                    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    osc.start(audioCtx.currentTime);
-                    osc.stop(audioCtx.currentTime + 0.3);
-                    break;
-                case 'claim':
-                    osc.frequency.setValueAtTime(500, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.15);
-                    osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.3);
-                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                    osc.start(audioCtx.currentTime);
-                    osc.stop(audioCtx.currentTime + 0.4);
-                    break;
+            if (type === 'jump') {
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.15);
+            } else if (type === 'coin') {
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'hit') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'claim') {
+                osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.15);
+                osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.4);
             }
         }
         
@@ -838,12 +841,11 @@ lue" id="claimReward">0 RITUAL</div>
             btn.classList.toggle('muted', !soundEnabled);
         }
         
-        // Wallet
+        // ===== WALLET =====
         let walletAddress = '';
         let provider = null;
         let signer = null;
         
-        // ===== WALLET CONNECT =====
         async function connectWallet() {
             if (walletAddress) {
                 walletAddress = '';
@@ -856,30 +858,17 @@ lue" id="claimReward">0 RITUAL</div>
                 return;
             }
             
-            // Check for MetaMask or other wallets
             if (typeof window.ethereum === 'undefined') {
                 showToast('❌', 'Install MetaMask!');
-                // Try to open MetaMask install page
-                setTimeout(() => {
-                    window.open('https://metamask.io/download/', '_blank');
-                }, 1000);
+                setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1000);
                 return;
             }
             
             try {
-                showToast('🔗', 'Connecting to MetaMask...');
+                showToast('🔗', 'Connecting...');
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (!accounts || accounts.length === 0) { showToast('❌', 'No accounts'); return; }
                 
-                // Request account access
-                const accounts = await window.ethereum.request({ 
-                    method: 'eth_requestAccounts' 
-                });
-                
-                if (!accounts || accounts.length === 0) {
-                    showToast('❌', 'No accounts found');
-                    return;
-                }
-                
-                // Get provider and signer
                 provider = new ethers.BrowserProvider(window.ethereum);
                 signer = await provider.getSigner();
                 walletAddress = accounts[0];
@@ -888,54 +877,33 @@ lue" id="claimReward">0 RITUAL</div>
                 document.getElementById('connectText').textContent = short;
                 document.getElementById('connectBtn').classList.add('connected');
                 document.getElementById('walletInput').value = walletAddress;
-                
                 showToast('✅', 'Connected: ' + short);
                 await switchToRitual();
             } catch (err) {
-                console.error('Wallet error:', err);
-                if (err.code === 4001) {
-                    showToast('❌', 'Connection rejected');
-                } else {
-                    showToast('❌', 'Error: ' + (err.message || 'Connection failed'));
-                }
+                console.error(err);
+                if (err.code === 4001) showToast('❌', 'Connection rejected');
+                else showToast('❌', err.message || 'Connection failed');
             }
         }
         
         async function switchToRitual() {
-            const chainId = '0x7b7'; // 1979 in hex
+            const chainId = '0x7b7';
             try {
-                await window.ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId }]
-                });
+                await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId }] });
                 showToast('🔗', 'Switched to Ritual Testnet');
-            } catch (switchError) {
-                console.error('Switch error:', switchError);
-                // Chain not added, try to add it
-                if (switchError.code === 4902) {
+            } catch (e) {
+                if (e.code === 4902) {
                     try {
                         await window.ethereum.request({
                             method: 'wallet_addEthereumChain',
-                            params: [{
-                                chainId,
-                                chainName: 'Ritual Testnet',
-                                nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-                                rpcUrls: ['https://rpc.test.ritual.community'],
-                                blockExplorerUrls: ['https://explorer.test.ritual.community']
-                            }]
+                            params: [{ chainId, chainName: 'Ritual Testnet', nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 }, rpcUrls: ['https://rpc.test.ritual.community'], blockExplorerUrls: ['https://explorer.test.ritual.community'] }]
                         });
                         showToast('✅', 'Ritual Testnet added!');
-                    } catch (addErr) {
-                        console.error('Add chain error:', addErr);
-                        showToast('⚠️', 'Please add Ritual Testnet manually');
-                    }
-                } else {
-                    // User rejected or other error
-                    console.error('Chain switch failed:', switchError);
+                    } catch (addErr) { showToast('⚠️', 'Add Ritual Testnet manually'); }
                 }
             }
         }
-        
+
         // ===== CONFIG =====
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
